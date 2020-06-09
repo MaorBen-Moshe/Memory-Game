@@ -2,7 +2,6 @@
 
 namespace MemoryGame
 {
-
     // $G$ DSN-001 (-5) Game flow implementation does not belong in this class.
     internal class GameControl
     {
@@ -35,6 +34,7 @@ namespace MemoryGame
         private Player m_FirstPlayer;
         private Player m_SecondPlayer;
         private ComputerPlayer m_ComputerPlayer;
+        private readonly Random r_Rand = new Random();
 
         public GameControl()
         {
@@ -123,12 +123,10 @@ namespace MemoryGame
 
 
         // $G$ DSN-002 (-20) No separation between the logical part of the game and the UI.
-        // $G$ NTT-007 (-10) There's no need to re-instantiate the Random instance each time it is used.
         private void gameHandler(string i_RivalName)
         {
-            Random rand = new Random();
             int pairsOnBoard = (m_GameBoard.Lines * m_GameBoard.Coloms) / 2;
-            bool gameToggle = rand.Next(2) == 0; // randomly pick true or false, the start player will change
+            bool gameToggle = r_Rand.Next(2) == 0; // randomly pick true or false, the start player will change
             do
             {
                 r_UtilesHandler.CleanScreenAndPrintBoard(m_GameBoard);
@@ -161,7 +159,7 @@ namespace MemoryGame
 
         private byte getRivalPairsFound()
         {
-            return m_SecondPlayer == null ? m_ComputerPlayer.PairsCount : m_SecondPlayer.PairsCount;
+            return m_SecondPlayer?.PairsCount ?? m_ComputerPlayer.PairsCount;
         }
 
         private bool setRivalTurn()
