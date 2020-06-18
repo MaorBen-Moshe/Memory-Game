@@ -41,10 +41,7 @@
   <ItemGroup>
     <Compile Include="ComputerPlayer.cs" />
     <Compile Include="GameBoard.cs" />
-    <Compile Include="GameControl.cs" />
-    <Compile Include="InputValidation.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="ValueOutOfRangeException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
