@@ -61,18 +61,6 @@ namespace WindowsAPI
 
         private void card_Click(object i_Sender, EventArgs i_E)
         {
-            r_GameButtons[i, j] = new Button
-                                  {
-                                      Enabled = true,
-                                      AutoSize = true,
-                                      Size = new Size(new Point(80, 80)),
-                                      Name = (j + (m_BoardSize.Y * i)).ToString(),
-                                      Tag = new int[2] { i, j },
-                                      Left = buttonWidth * j,
-                                      Top = buttonHeight * i,
-                                      Height = buttonHeight,
-                                      Width = buttonWidth
-                                  };
         }
 
         internal void CreateBoardValues(GameBoard i_GameBoard)
