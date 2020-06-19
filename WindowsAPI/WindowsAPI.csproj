@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MemoryGameLogic\MemoryGameLogic.csproj">
-      <Project>{2F4F0EE7-AEE7-47BF-AE78-73B6F935EF62}</Project>
+      <Project>{2f4f0ee7-aee7-47bf-ae78-73b6f935ef62}</Project>
       <Name>MemoryGameLogic</Name>
     </ProjectReference>
   </ItemGroup>

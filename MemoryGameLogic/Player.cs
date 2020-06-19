@@ -1,9 +1,9 @@
-﻿namespace MemoryGame
+﻿namespace MemoryGameLogic
 {
     public class Player
     {
-        private string m_Name;
-        private byte m_PairsCounter;
+        protected string m_Name;
+        protected byte m_PairsCounter;
 
         public Player(string i_Name)
         {

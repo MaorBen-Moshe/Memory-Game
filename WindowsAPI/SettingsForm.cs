@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsAPI
@@ -92,9 +87,26 @@ namespace WindowsAPI
 
         private void buttonStart_Click(object i_Sender, EventArgs i_E)
         {
-            m_BoardForm = new GameBoardForm(FirstPlayerName, SecondPlayerName, BoardSize);
-            Hide();
-            m_BoardForm.ShowDialog();
+            if(ensureNameHasValue())
+            {
+                MessageBox.Show(@"Name cannot be empty!", 
+                    @"Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            else
+            {
+                bool isAgainstComputer = textBoxSecondPlayer.Enabled == false;
+                m_BoardForm = new GameBoardForm(FirstPlayerName, SecondPlayerName, BoardSize, isAgainstComputer);
+                Hide();
+                m_BoardForm.ShowDialog();
+            }
+        }
+
+        private bool ensureNameHasValue()
+        {
+            return string.IsNullOrWhiteSpace(textBoxFirstName.Text) 
+                   || string.IsNullOrWhiteSpace(textBoxSecondPlayer.Text);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MemoryGame
+namespace MemoryGameLogic
 {
     public class GameBoard
     {
@@ -43,6 +43,7 @@ namespace MemoryGame
         private readonly byte r_Lines;
         private readonly byte r_Coloms;
         private readonly Cell[,] r_Board;
+        private readonly Random r_Rand;
 
         public byte Lines
         {
@@ -73,6 +74,7 @@ namespace MemoryGame
             this.r_Lines = i_Lines;
             this.r_Coloms = i_Coloms;
             this.r_Board = new Cell[i_Lines, i_Coloms];
+            this.r_Rand = new Random();
             intialBoardWithValues();
         }
 
@@ -119,8 +121,7 @@ namespace MemoryGame
 
         private void updateRandomCell(List<Cell> i_CellsList, byte i_ToInsert)
         {
-            Random rnd = new Random();
-            int randomPlace = rnd.Next() % i_CellsList.Count;
+            int randomPlace = r_Rand.Next() % i_CellsList.Count;
             i_CellsList[randomPlace].Content = i_ToInsert;
             i_CellsList.Remove(i_CellsList[randomPlace]);
         }

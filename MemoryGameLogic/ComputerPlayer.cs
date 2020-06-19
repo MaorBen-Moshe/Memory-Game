@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace MemoryGame
+namespace MemoryGameLogic
 {
-    using System;
-
-    public class ComputerPlayer
+    public class ComputerPlayer : Player
     {
         public struct Point
         {
@@ -33,43 +32,15 @@ namespace MemoryGame
                 }
             }
         }
-
-        private readonly Player r_PlayerDetails;
-
         private readonly List<Point> r_UnknownCellsList;
-
         private readonly bool r_Ai;
-
         private readonly Dictionary<byte, Point> r_UnMatchedRevealedCells;
-
         private readonly Dictionary<Point, Point> r_MatchedRevealedCells;
-
         private readonly Random r_Rnd = new Random();
 
-        public byte PairsCount
+        public ComputerPlayer(byte i_Lines, byte i_Coloms, bool i_Ai = false)
+        : base("Computer")
         {
-            get
-            {
-                return r_PlayerDetails.PairsCount;
-            }
-
-            set
-            {
-                r_PlayerDetails.PairsCount = value;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return r_PlayerDetails.Name;
-            }
-        }
-
-        public ComputerPlayer(byte i_Lines, byte i_Coloms, bool i_Ai)
-        {
-            r_PlayerDetails = new Player("Computer");
             r_UnknownCellsList = new List<Point>(i_Lines * i_Coloms);
             r_UnMatchedRevealedCells = new Dictionary<byte, Point>();
             r_MatchedRevealedCells = new Dictionary<Point, Point>();
