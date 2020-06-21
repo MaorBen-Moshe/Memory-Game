@@ -1,6 +1,6 @@
 ﻿namespace WindowsAPI
 {
-    partial class GameBoardForm
+    public partial class GameBoardForm
     {
         /// <summary>
         /// Required designer variable.
@@ -17,6 +17,7 @@
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 

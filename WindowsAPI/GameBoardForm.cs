@@ -8,6 +8,12 @@ namespace WindowsAPI
 {
     public partial class GameBoardForm : Form
     {
+        // in usage when we build the Matrix Buttons
+        private const int k_CardStartHorizonPos = 50;
+        private const int k_CardStartVerticalPos = 10;
+        private const int k_CardWidth = 80;
+        private const int k_CardHeight = 77;
+
         private readonly Random r_Rnd = new Random();
         private readonly Dictionary<byte, char> r_GameValues;
         private readonly GameBoard r_GameBoard;
@@ -27,14 +33,9 @@ namespace WindowsAPI
             setStatisticsPanel(i_FirstPlayerName, i_SecondPlayerName, i_AgainstComputer);
         }
 
-        // in usage when we build the Matrix Buttons
-        private const int k_CardStartHorizonPos = 50;
-        private const int k_CardStartVerticalPos = 10;
-        private const int k_CardWidth = 80;
-        private const int k_CardHeight = 77;
-
         private int m_BoardCardRight = 90;
         private int m_BoardCardDown = 90;
+
         private void initialBoardButtons()
         {
             int firstHorizonPos = k_CardStartHorizonPos;
@@ -89,6 +90,7 @@ namespace WindowsAPI
 
         private Button m_FirstClicked;
         private Button m_SecondClicked;
+
         private void card_Click(object i_Sender, EventArgs i_E)
         {
             Button current = i_Sender as Button;

@@ -89,7 +89,8 @@ namespace WindowsAPI
         {
             if(ensureNameHasValue())
             {
-                MessageBox.Show(@"Name cannot be empty!", 
+                MessageBox.Show(
+                    @"Name cannot be empty!", 
                     @"Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
