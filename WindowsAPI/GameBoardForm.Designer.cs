@@ -35,8 +35,9 @@
             this.labelCurrentPlayerName = new System.Windows.Forms.Label();
             this.labelFirstPlayerPairs = new System.Windows.Forms.Label();
             this.labelSecondPlayerPairs = new System.Windows.Forms.Label();
-            this.Matrix = new System.Windows.Forms.Panel();
             this.TimerCards = new System.Windows.Forms.Timer(this.components);
+            this.panelStatistics = new System.Windows.Forms.Panel();
+            this.panelStatistics.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelCurrentPlayer
@@ -44,7 +45,7 @@
             this.labelCurrentPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCurrentPlayer.AutoSize = true;
-            this.labelCurrentPlayer.Location = new System.Drawing.Point(34, 548);
+            this.labelCurrentPlayer.Location = new System.Drawing.Point(12, 18);
             this.labelCurrentPlayer.Name = "labelCurrentPlayer";
             this.labelCurrentPlayer.Size = new System.Drawing.Size(113, 20);
             this.labelCurrentPlayer.TabIndex = 0;
@@ -55,7 +56,7 @@
             this.labelFirstPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelFirstPlayer.AutoSize = true;
-            this.labelFirstPlayer.Location = new System.Drawing.Point(34, 583);
+            this.labelFirstPlayer.Location = new System.Drawing.Point(12, 55);
             this.labelFirstPlayer.Name = "labelFirstPlayer";
             this.labelFirstPlayer.Size = new System.Drawing.Size(86, 20);
             this.labelFirstPlayer.TabIndex = 1;
@@ -64,7 +65,7 @@
             // labelSecondPlayer
             // 
             this.labelSecondPlayer.AutoSize = true;
-            this.labelSecondPlayer.Location = new System.Drawing.Point(34, 616);
+            this.labelSecondPlayer.Location = new System.Drawing.Point(12, 96);
             this.labelSecondPlayer.Name = "labelSecondPlayer";
             this.labelSecondPlayer.Size = new System.Drawing.Size(110, 20);
             this.labelSecondPlayer.TabIndex = 2;
@@ -75,7 +76,7 @@
             this.labelCurrentPlayerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCurrentPlayerName.AutoSize = true;
-            this.labelCurrentPlayerName.Location = new System.Drawing.Point(151, 548);
+            this.labelCurrentPlayerName.Location = new System.Drawing.Point(131, 18);
             this.labelCurrentPlayerName.Name = "labelCurrentPlayerName";
             this.labelCurrentPlayerName.Size = new System.Drawing.Size(104, 20);
             this.labelCurrentPlayerName.TabIndex = 3;
@@ -86,7 +87,7 @@
             this.labelFirstPlayerPairs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelFirstPlayerPairs.AutoSize = true;
-            this.labelFirstPlayerPairs.Location = new System.Drawing.Point(155, 583);
+            this.labelFirstPlayerPairs.Location = new System.Drawing.Point(131, 55);
             this.labelFirstPlayerPairs.Name = "labelFirstPlayerPairs";
             this.labelFirstPlayerPairs.Size = new System.Drawing.Size(126, 20);
             this.labelFirstPlayerPairs.TabIndex = 4;
@@ -97,50 +98,49 @@
             this.labelSecondPlayerPairs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelSecondPlayerPairs.AutoSize = true;
-            this.labelSecondPlayerPairs.Location = new System.Drawing.Point(155, 616);
+            this.labelSecondPlayerPairs.Location = new System.Drawing.Point(131, 96);
             this.labelSecondPlayerPairs.Name = "labelSecondPlayerPairs";
             this.labelSecondPlayerPairs.Size = new System.Drawing.Size(146, 20);
             this.labelSecondPlayerPairs.TabIndex = 5;
             this.labelSecondPlayerPairs.Text = "SecondPlayer Pairs";
-            // 
-            // Matrix
-            // 
-            this.Matrix.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Matrix.BackColor = System.Drawing.Color.IndianRed;
-            this.Matrix.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Matrix.Cursor = System.Windows.Forms.Cursors.PanNW;
-            this.Matrix.Location = new System.Drawing.Point(12, 12);
-            this.Matrix.Name = "Matrix";
-            this.Matrix.Size = new System.Drawing.Size(777, 523);
-            this.Matrix.TabIndex = 6;
             // 
             // TimerCards
             // 
             this.TimerCards.Interval = 750;
             this.TimerCards.Tick += new System.EventHandler(this.TimerCards_Tick);
             // 
+            // panelStatistics
+            // 
+            this.panelStatistics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.panelStatistics.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelStatistics.Controls.Add(this.labelCurrentPlayer);
+            this.panelStatistics.Controls.Add(this.labelSecondPlayerPairs);
+            this.panelStatistics.Controls.Add(this.labelSecondPlayer);
+            this.panelStatistics.Controls.Add(this.labelFirstPlayerPairs);
+            this.panelStatistics.Controls.Add(this.labelCurrentPlayerName);
+            this.panelStatistics.Controls.Add(this.labelFirstPlayer);
+            this.panelStatistics.Location = new System.Drawing.Point(19, 372);
+            this.panelStatistics.MaximumSize = new System.Drawing.Size(291, 137);
+            this.panelStatistics.Name = "panelStatistics";
+            this.panelStatistics.Size = new System.Drawing.Size(291, 137);
+            this.panelStatistics.TabIndex = 6;
+            // 
             // GameBoardForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.Silver;
-            this.ClientSize = new System.Drawing.Size(801, 652);
-            this.Controls.Add(this.Matrix);
-            this.Controls.Add(this.labelSecondPlayerPairs);
-            this.Controls.Add(this.labelFirstPlayerPairs);
-            this.Controls.Add(this.labelCurrentPlayerName);
-            this.Controls.Add(this.labelSecondPlayer);
-            this.Controls.Add(this.labelFirstPlayer);
-            this.Controls.Add(this.labelCurrentPlayer);
+            this.ClientSize = new System.Drawing.Size(772, 521);
+            this.Controls.Add(this.panelStatistics);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(823, 708);
-            this.MinimumSize = new System.Drawing.Size(823, 708);
             this.Name = "GameBoardForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Memory Game";
+            this.panelStatistics.ResumeLayout(false);
+            this.panelStatistics.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -152,7 +152,7 @@
         private System.Windows.Forms.Label labelCurrentPlayerName;
         private System.Windows.Forms.Label labelFirstPlayerPairs;
         private System.Windows.Forms.Label labelSecondPlayerPairs;
-        private System.Windows.Forms.Panel Matrix;
         private System.Windows.Forms.Timer TimerCards;
+        private System.Windows.Forms.Panel panelStatistics;
     }
 }

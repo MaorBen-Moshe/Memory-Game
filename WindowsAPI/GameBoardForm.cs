@@ -8,11 +8,12 @@ namespace WindowsAPI
 {
     public partial class GameBoardForm : Form
     {
-        private Point m_BoardSize;
         private readonly Random r_Rnd = new Random();
         private readonly Dictionary<byte, char> r_GameValues;
         private readonly GameBoard r_GameBoard;
         private readonly GameManager r_GameControler;
+        private readonly Button[,] r_Matrix;
+        private Point m_BoardSize;
 
         public GameBoardForm(string i_FirstPlayerName, string i_SecondPlayerName, Point i_BoardSize, bool i_AgainstComputer)
         {
@@ -20,44 +21,70 @@ namespace WindowsAPI
             m_BoardSize = i_BoardSize;
             r_GameValues = new Dictionary<byte, char>();
             r_GameBoard = new GameBoard((byte)m_BoardSize.X, (byte)m_BoardSize.Y);
-            //r_GameControler = new GameManager();
-            labelFirstPlayer.Text = i_FirstPlayerName;
-            labelFirstPlayer.BackColor = Color.Turquoise;
-            labelSecondPlayer.Text = i_AgainstComputer ? "Computer" : i_SecondPlayerName;
-            labelSecondPlayer.BackColor = Color.BurlyWood;
-            labelFirstPlayerPairs.Text = labelSecondPlayerPairs.Text = @"0 Pair(s)";
-            createBoard();
+            r_GameControler = new GameManager(i_FirstPlayerName, i_SecondPlayerName, r_GameBoard.Lines, r_GameBoard.Coloms, i_AgainstComputer);
+            r_Matrix = new Button[m_BoardSize.X, m_BoardSize.Y];
+            initialBoardButtons();
+            setStatisticsPanel(i_FirstPlayerName, i_SecondPlayerName, i_AgainstComputer);
         }
 
-        private void createBoard()
+        // in usage when we build the Matrix Buttons
+        private const int k_CardStartHorizonPos = 50;
+        private const int k_CardStartVerticalPos = 10;
+        private const int k_CardWidth = 80;
+        private const int k_CardHeight = 77;
+
+        private int m_BoardCardRight = 90;
+        private int m_BoardCardDown = 90;
+        private void initialBoardButtons()
         {
-            int boardSize = m_BoardSize.X * m_BoardSize.Y;
-            int buttonHeight = Height / boardSize;
-            int buttonWidth = Width / boardSize;
+            int firstHorizonPos = k_CardStartHorizonPos;
+            int firstVerticalPos = k_CardStartVerticalPos;
 
             for(int i = 0; i < m_BoardSize.X; i++)
             {
                 for(int j = 0; j < m_BoardSize.Y; j++)
                 {
-                    Button current = new Button 
-                                          { 
-                                              Enabled = true,
-                                              AutoSize = true,
-                                              Size = new Size(new Point(100, 100)),
-                                              Name = String.Format(format: "{0},{1}", i, j),
-                                              Tag = new int[2] { i, j },
-                                              Left = buttonWidth * j,
-                                              Top = buttonHeight * i,
-                                              Height = buttonHeight,
-                                              Width = buttonWidth
-                                          };
-                    
-                    current.Click += card_Click;
-                    Matrix.Controls.Add(current);
+                    r_GameBoard[(byte)i, (byte)j].IsRevealed = false;
+                    r_Matrix[i, j] = new Button
+                                     {
+                                         Name = i + " " + j
+                                     };
+                    setButtonDesign(r_Matrix[i, j], firstHorizonPos, firstVerticalPos);
+                    firstHorizonPos += m_BoardCardRight;
+                    this.Controls.Add(r_Matrix[i, j]);
                 }
+
+                firstHorizonPos = k_CardStartHorizonPos;
+                firstVerticalPos += m_BoardCardDown;
             }
 
+            this.Width = r_Matrix[m_BoardSize.X - 1, m_BoardSize.Y - 1].Right + r_Matrix[0, 0].Left;
+            this.Height = r_Matrix[m_BoardSize.X - 1, m_BoardSize.Y - 1].Bottom + 170;
             CreateBoardValues();
+        }
+
+        private void setButtonDesign(Button i_CurrentButton, int i_HorizonPos, int i_VerticalPos)
+        {
+            i_CurrentButton.Location = new Point(i_HorizonPos, i_VerticalPos);
+            i_CurrentButton.Size = new Size(k_CardWidth, k_CardHeight);
+            i_CurrentButton.Click += card_Click;
+        }
+
+        private void setStatisticsPanel(string i_FirstPlayerName, string i_SecondPlayerName, bool i_AgainstComputer)
+        {
+            labelFirstPlayer.Text = i_FirstPlayerName;
+            labelFirstPlayer.BackColor = Color.Turquoise;
+            labelSecondPlayer.Text = i_AgainstComputer ? "Computer" : i_SecondPlayerName;
+            labelSecondPlayer.BackColor = Color.BurlyWood;
+            labelFirstPlayerPairs.Text = labelSecondPlayerPairs.Text = @"0 Pair(s)";
+            labelCurrentPlayerName.Text = r_GameControler.CurrentPlayer.Name;
+            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayer.Name == i_FirstPlayerName
+                                                   ? labelFirstPlayer.BackColor
+                                                   : labelSecondPlayer.BackColor;
+            labelCurrentPlayer.BackColor = labelCurrentPlayerName.BackColor;
+
+            panelStatistics.Top = r_Matrix[m_BoardSize.X - 1, 0].Bottom + 20;
+            panelStatistics.Left += r_Matrix[m_BoardSize.X - 1, 0].Left - 10;
         }
 
         private Button m_FirstClicked;
@@ -86,16 +113,16 @@ namespace WindowsAPI
 
         private void cardClickHandler(Button i_Current)
         {
-            string[] buttonPlace = i_Current.Name.Split(',');
+            string[] buttonPlace = i_Current.Name.Split(' ');
             byte line = byte.Parse(buttonPlace[0]);
             byte colom = byte.Parse(buttonPlace[1]);
-            Matrix.Controls[colom + (m_BoardSize.Y * line)].BackColor = labelFirstPlayer.BackColor;
-            Matrix.Controls[colom + (m_BoardSize.Y * line)].Text = r_GameValues[r_GameBoard[line, colom].Content].ToString();
+            r_Matrix[line, colom].BackColor = labelFirstPlayer.BackColor;
+           r_Matrix[line, colom].Text = r_GameValues[r_GameBoard[line, colom].Content].ToString();
         }
 
         private void checkForWinners()
         {
-            foreach(Button current in Matrix.Controls)
+            foreach(Button current in r_Matrix)
             {
                 if(current.Text == string.Empty)
                 {

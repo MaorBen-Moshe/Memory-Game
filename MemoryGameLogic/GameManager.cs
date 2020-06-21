@@ -4,25 +4,40 @@ namespace MemoryGameLogic
 {
     public class GameManager
     {
-        //private Player m_FirstPlayer;
-        //private Player m_SecondPlayer; // can be computer or regular
-        //private readonly Random r_Rnd;
-        //private int m_PairsOnBoard;
-        //private int m_CurrStatePairsOnBoard;
+        private Player m_FirstPlayer;
+        private Player m_SecondPlayer; // can be computer or regular
+        private Player m_CurrentPlayer;
+        private readonly Random r_Rnd;
+        private int m_PairsOnBoard;
+        private int m_CurrStatePairsOnBoard;
 
-        //public GameManager(string i_FirstPlayer,
-        //                   string i_SecondPlayer,
-        //                   int i_BoardLines,
-        //                   int i_BoardColoms,
-        //                   bool i_AgainstComputer = false)
-        //{
-        //    m_FirstPlayer = new Player(i_FirstPlayer);
-        //    m_SecondPlayer = i_AgainstComputer ?
-        //                         new ComputerPlayer((byte)i_BoardLines, (byte)i_BoardColoms)
-        //                         : new Player(i_SecondPlayer);
-        //    r_Rnd = new Random();
-        //    m_PairsOnBoard = (i_BoardLines * i_BoardColoms) / 2;
-        //}
+        public GameManager(string i_FirstPlayer,
+                           string i_SecondPlayer,
+                           int i_BoardLines,
+                           int i_BoardColoms,
+                           bool i_AgainstComputer = false)
+        {
+            m_FirstPlayer = new Player(i_FirstPlayer);
+            m_SecondPlayer = i_AgainstComputer ?
+                                 new ComputerPlayer((byte)i_BoardLines, (byte)i_BoardColoms)
+                                 : new Player(i_SecondPlayer);
+            r_Rnd = new Random();
+            m_PairsOnBoard = (i_BoardLines * i_BoardColoms) / 2;
+            CurrentPlayer = m_FirstPlayer;
+        }
+
+        public Player CurrentPlayer
+        {
+            get
+            {
+                return m_CurrentPlayer;
+            }
+
+            set
+            {
+                m_CurrentPlayer = value;
+            }
+        }
 
         //public void PlayGame()
         //{
