@@ -78,7 +78,7 @@ namespace MemoryGameLogic
             intialBoardWithValues();
         }
 
-        public void Clear()
+        internal void Clear()
         {
             foreach (Cell current in r_Board)
             {
@@ -87,7 +87,7 @@ namespace MemoryGameLogic
             }
         }
 
-        private void intialBoardWithValues()
+        internal void intialBoardWithValues()
         {
             List<Cell> cellsList = new List<Cell>(r_Lines * r_Coloms);
             for (byte i = 0; i < r_Lines; i++)

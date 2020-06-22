@@ -88,6 +88,11 @@ namespace MemoryGameLogic
             {
                 return r_FirstPlayer.PairsCount;
             }
+
+            set
+            {
+                r_FirstPlayer.PairsCount = 0;
+            }
         }
 
         public int SecondPlayerPairs
@@ -95,6 +100,27 @@ namespace MemoryGameLogic
             get
             {
                 return r_SecondPlayer.PairsCount;
+            }
+
+            set
+            {
+                r_SecondPlayer.PairsCount = 0;
+            }
+        }
+
+        public string FirstPlayerName
+        {
+            get
+            {
+                return r_FirstPlayer.Name;
+            }
+        }
+
+        public string SecondPlayerName
+        {
+            get
+            {
+                return r_SecondPlayer.Name;
             }
         }
 
@@ -112,7 +138,32 @@ namespace MemoryGameLogic
 
             return isGameEnds();
         }
-        
+
+        public string Winner()
+        {
+            string winner = null; // if the game ends with a draw winner will stay null
+            if (r_FirstPlayer.PairsCount > r_SecondPlayer.PairsCount)
+            {
+                winner = r_FirstPlayer.Name;
+            }
+            else if (r_SecondPlayer.PairsCount > r_FirstPlayer.PairsCount)
+            {
+                winner = r_SecondPlayer.Name;
+            }
+
+            return winner;
+        }
+
+        public void setNewBoard()
+        {
+            r_GameBoard.Clear();
+            r_GameBoard.intialBoardWithValues();
+            r_FirstPlayer.PairsCount = 0;
+            r_SecondPlayer.PairsCount = 0;
+            m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
+            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
+        }
+
         private bool setRivalTurn()
         {
             return r_SecondPlayer is ComputerPlayer
@@ -186,21 +237,6 @@ namespace MemoryGameLogic
         private bool isGameEnds()
         {
             return FirstPlayerPairs + SecondPlayerPairs == (r_GameBoard.Lines * r_GameBoard.Coloms) / 2;
-        }
-
-        public string Winner()
-        {
-            string winner = null; // if the game ends with a draw winner will stay null
-            if(r_FirstPlayer.PairsCount > r_SecondPlayer.PairsCount)
-            {
-                winner = r_FirstPlayer.Name;
-            }
-            else if(r_SecondPlayer.PairsCount > r_FirstPlayer.PairsCount)
-            {
-                winner = r_SecondPlayer.Name;
-            }
-
-            return winner;
         }
     }
 }
