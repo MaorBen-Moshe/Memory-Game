@@ -4,6 +4,8 @@ namespace MemoryGameLogic
 {
     public class GameManager
     {
+        public event Action OnComputerTurn;
+
         private enum eRound
         {
             FirstRound,
@@ -55,6 +57,20 @@ namespace MemoryGameLogic
             set
             {
                 m_CurrentPlayer = value;
+            }
+        }
+
+        public ComputerPlayer Computer
+        {
+            get
+            {
+                ComputerPlayer toReturn = null;
+                if(r_SecondPlayer is ComputerPlayer)
+                {
+                    toReturn = r_SecondPlayer as ComputerPlayer;
+                }
+
+                return toReturn;
             }
         }
 
@@ -164,6 +180,11 @@ namespace MemoryGameLogic
             m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
         }
 
+        public void OnComputerPlay()
+        {
+            OnComputerTurn?.Invoke();
+        }
+
         private bool setRivalTurn()
         {
             return r_SecondPlayer is ComputerPlayer
@@ -173,21 +194,20 @@ namespace MemoryGameLogic
 
         private bool computerTurn()
         {
+            bool matchFound = false;
             (r_SecondPlayer as ComputerPlayer).PlayTurn(
                 r_GameBoard,
                 out byte firstLine,
                 out byte firstColom,
                 out byte secondLine,
                 out byte secondColom);
-
-            bool matchFound = false;
-
             if (r_GameBoard[firstLine, firstColom].Content == r_GameBoard[secondLine, secondColom].Content)
             {
                 r_SecondPlayer.PairsCount++;
                 matchFound = true;
             }
-            
+
+            m_CurrentRound = eRound.EndRound;
             return matchFound;
         }
 

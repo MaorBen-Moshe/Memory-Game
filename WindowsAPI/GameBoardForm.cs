@@ -35,6 +35,64 @@ namespace WindowsAPI
             r_Matrix = new Button[i_BoardSize.X, i_BoardSize.Y];
             initialBoardButtons();
             intialStatisticsPanel();
+            if(i_AgainstComputer)
+            {
+                setGameLevel();
+                r_GameControler.Computer.OnComputerChoose += Computer_OnOnComputerChoose;
+                r_GameControler.OnComputerTurn += GameControler_OnOnComputerTurn;
+            }
+        }
+
+        private void setGameLevel()
+        {
+            string askForLevel = string.Format(
+                format: @"Would you like the play in:
+1.Hard Mode - press Yes
+2.Easy Mode - press No");
+            DialogResult result = MessageBox.Show(
+                askForLevel,
+                @"Game Level",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+            if(result == DialogResult.Yes)
+            {
+                r_GameControler.Computer.Ai = true;
+            }
+            else
+            {
+                r_GameControler.Computer.Ai = false;
+            }
+        }
+
+        private void GameControler_OnOnComputerTurn()
+        {
+            handlePlayerTurn();
+        }
+
+        private void Computer_OnOnComputerChoose()
+        {
+            m_CurrentButtonLine = (byte)r_GameControler.Computer.CurrentLineChoose;
+            m_CurrentButtonColom = (byte)r_GameControler.Computer.CurrentColomChoose;
+            m_TurnsCounter++;
+            if(m_FirstClicked == null)
+            {
+                m_FirstClicked = r_Matrix[m_CurrentButtonLine, m_CurrentButtonColom];
+                cardClickHandler();
+                return;
+            }
+
+            m_SecondClicked = r_Matrix[m_CurrentButtonLine, m_CurrentButtonColom];
+            cardClickHandler();
+            TimerCards.Start();
+
+            if(m_TurnsCounter == 2)
+            {
+                if (m_TurnsCounter == 2)
+                {
+                    m_TurnsCounter = 0;
+                    setStatisticsGamePanel();
+                }
+            }
         }
 
         public byte CurrentLineChosen
