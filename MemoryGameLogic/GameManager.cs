@@ -4,26 +4,45 @@ namespace MemoryGameLogic
 {
     public class GameManager
     {
-        private Player m_FirstPlayer;
-        private Player m_SecondPlayer; // can be computer or regular
-        private Player m_CurrentPlayer;
-        private readonly Random r_Rnd;
-        private int m_PairsOnBoard;
-        private int m_CurrStatePairsOnBoard;
+        private enum eRound
+        {
+            FirstRound,
+            SecondRound,
+            EndRound
+        }
 
-        public GameManager(string i_FirstPlayer,
+        private readonly IObserver r_Observer;
+        private readonly GameBoard r_GameBoard;
+        private readonly Random r_Rnd;
+        private readonly Player r_FirstPlayer;
+        private readonly Player r_SecondPlayer; // can be computer or regular
+        private Player m_CurrentPlayer;
+        private bool m_GameToggle;
+        private byte m_FirstLineChosen;
+        private byte m_FirstColomChosen;
+        private byte m_FirstValueFound;
+        private byte m_SecondLineChosen;
+        private byte m_SecondColomChosen;
+        private byte m_SecondValueFound;
+        private eRound m_CurrentRound = eRound.FirstRound;
+
+        public GameManager(
+            string i_FirstPlayer,
                            string i_SecondPlayer,
                            int i_BoardLines,
                            int i_BoardColoms,
+                           IObserver i_Observer,
                            bool i_AgainstComputer = false)
         {
-            m_FirstPlayer = new Player(i_FirstPlayer);
-            m_SecondPlayer = i_AgainstComputer ?
+            r_GameBoard = new GameBoard((byte)i_BoardLines, (byte)i_BoardColoms);
+            r_FirstPlayer = new Player(i_FirstPlayer);
+            r_SecondPlayer = i_AgainstComputer ?
                                  new ComputerPlayer((byte)i_BoardLines, (byte)i_BoardColoms)
                                  : new Player(i_SecondPlayer);
+            r_Observer = i_Observer;
             r_Rnd = new Random();
-            m_PairsOnBoard = (i_BoardLines * i_BoardColoms) / 2;
-            CurrentPlayer = m_FirstPlayer;
+            m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
+            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
         }
 
         public Player CurrentPlayer
@@ -39,146 +58,149 @@ namespace MemoryGameLogic
             }
         }
 
-        //public void PlayGame()
-        //{
-        //    bool gameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
-        //    do
-        //    {
-        //        bool playerFoundPair = gameToggle
-        //                                   ? playerTurn(m_FirstPlayer)
-        //                                   : setRivalTurn();
+        public GameBoard GameBoard
+        {
+            get
+            {
+                return r_GameBoard;
+            }
+        }
 
-        //        m_CurrStatePairsOnBoard = m_FirstPlayer.PairsCount + m_SecondPlayer.PairsCount;
-        //        gameToggle = playerFoundPair ? gameToggle : !gameToggle;
-        //    }
-        //    while (m_CurrStatePairsOnBoard < m_PairsOnBoard);
-        //}
+        public int BoardLines
+        {
+            get
+            {
+                return r_GameBoard.Lines;
+            }
+        }
 
-        //private bool setRivalTurn()
-        //{
-        //    return m_SecondPlayer is ComputerPlayer
-        //               ? computerTurn()
-        //               : playerTurn(m_SecondPlayer);
-        //}
+        public int BoardColoms
+        {
+            get
+            {
+                return r_GameBoard.Coloms;
+            }
+        }
 
-        //private bool computerTurn()
-        //{
-        //    m_SecondPlayer.PlayTurn(
-        //        m_GameBoard,
-        //        out byte firstLine,
-        //        out byte firstColom,
-        //        out byte secondLine,
-        //        out byte secondColom);
+        public int FirstPlayerPairs
+        {
+            get
+            {
+                return r_FirstPlayer.PairsCount;
+            }
+        }
 
-        //    byte firstValue = m_GameBoard[firstLine, firstColom].Content;
-        //    byte secondValue = m_GameBoard[secondLine, secondColom].Content;
+        public int SecondPlayerPairs
+        {
+            get
+            {
+                return r_SecondPlayer.PairsCount;
+            }
+        }
 
-        //    r_UtilesHandler.PrintComputerChoice(m_GameBoard, firstLine, firstColom, m_GameStatistics);
-        //    r_UtilesHandler.PrintComputerChoice(m_GameBoard, secondLine, secondColom, m_GameStatistics);
+        public bool PlayGame()
+        {
+            bool playerFoundPair = m_GameToggle
+                                       ? playerTurn(r_FirstPlayer)
+                                       : setRivalTurn();
+            if(m_CurrentRound == eRound.EndRound)
+            {
+                m_GameToggle = playerFoundPair ? m_GameToggle : !m_GameToggle;
+                m_CurrentRound = eRound.FirstRound;
+                m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
+            }
 
-        //    bool matchFound = turnResult(
-        //    firstLine,
-        //        firstColom,
-        //        secondLine,
-        //        secondColom,
-        //        firstValue,
-        //        secondValue);
-        //    if (matchFound)
-        //    {
-        //        m_ComputerPlayer.PairsCount++;
-        //    }
+            return isGameEnds();
+        }
+        
+        private bool setRivalTurn()
+        {
+            return r_SecondPlayer is ComputerPlayer
+                       ? computerTurn()
+                       : playerTurn(r_SecondPlayer);
+        }
 
-        //    return matchFound;
-        //}
+        private bool computerTurn()
+        {
+            (r_SecondPlayer as ComputerPlayer).PlayTurn(
+                r_GameBoard,
+                out byte firstLine,
+                out byte firstColom,
+                out byte secondLine,
+                out byte secondColom);
 
-        //private bool playerTurn(Player i_CurrPlayer)
-        //{
-        //    byte firstLine = 0, secondLine = 0, firstColom = 0, secondColom = 0;
-        //    byte firstValue = 0, secondValue = 0;
-        //    bool playerSucceeded = false;
+            bool matchFound = false;
 
-        //    playerTurnHandler(
-        //        i_CurrPlayer,
-        //        ref firstLine,
-        //        ref firstColom,
-        //        ref secondLine,
-        //        ref secondColom,
-        //        ref firstValue,
-        //        ref secondValue);
-        //    if (m_IsShutDown != true)
-        //    {
-        //        playerSucceeded = turnResult(
-        //            firstLine,
-        //            firstColom,
-        //            secondLine,
-        //            secondColom,
-        //            firstValue,
-        //            secondValue);
+            if (r_GameBoard[firstLine, firstColom].Content == r_GameBoard[secondLine, secondColom].Content)
+            {
+                r_SecondPlayer.PairsCount++;
+                matchFound = true;
+            }
+            
+            return matchFound;
+        }
 
-        //        if (playerSucceeded)
-        //        {
-        //            i_CurrPlayer.PairsCount++;
-        //        }
-        //    }
+        private bool playerTurn(Player i_CurrPlayer)
+        {
+            bool playerSucceeded = false;
 
-        //    return playerSucceeded;
-        //}
+            switch (m_CurrentRound)
+            {
+                case eRound.FirstRound:
+                    playerTurnHandler(i_CurrPlayer, eRound.SecondRound, out m_FirstLineChosen, out m_FirstColomChosen, out m_FirstValueFound);
+                    break;
+                case eRound.SecondRound:
+                    playerTurnHandler(i_CurrPlayer, eRound.EndRound, out m_SecondLineChosen, out m_SecondColomChosen, out m_SecondValueFound);
+                    break;
+            }
 
-        //private void playerTurnHandler(
-        //    Player i_CurrPlayer,
-        //    ref byte io_FirstLine,
-        //    ref byte io_FirstColom,
-        //    ref byte io_SecondLine,
-        //    ref byte io_SecondColom,
-        //    ref byte io_FirstValue,
-        //    ref byte io_SecondValue)
-        //{
-        //    eRound roundChecker = eRound.FirstRound;
-        //    do
-        //    {
-        //        bool isValid = r_Validator.IsCellEmptyOrExist(m_GameBoard, out byte line, out byte colom, out m_IsShutDown);
-        //        if (m_IsShutDown)
-        //        {
-        //            break;
-        //        }
+            if(m_CurrentRound == eRound.EndRound)
+            {
+                (r_SecondPlayer as ComputerPlayer)?.ComputerLearn(
+                    m_FirstLineChosen,
+                    m_FirstColomChosen,
+                    m_FirstValueFound,
+                    m_SecondLineChosen,
+                    m_SecondColomChosen,
+                    m_SecondValueFound);
 
-        //        if (isValid != true)
-        //        {
-        //            r_UtilesHandler.CleanScreenAndPrintBoard(m_GameBoard);
-        //            continue;
-        //        }
+                if (r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].Content == r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].Content)
+                {
+                    i_CurrPlayer.PairsCount++;
+                    playerSucceeded = true;
+                }
+            }
 
-        //        switch (roundChecker)
-        //        {
-        //            case eRound.FirstRound:
-        //                io_FirstLine = line;
-        //                io_FirstColom = colom;
-        //                i_CurrPlayer.PlayTurn(m_GameBoard, ref io_FirstLine, ref io_FirstColom, out io_FirstValue);
-        //                roundChecker = eRound.SecondRound;
-        //                break;
-        //            case eRound.SecondRound:
-        //                io_SecondLine = line;
-        //                io_SecondColom = colom;
-        //                i_CurrPlayer.PlayTurn(m_GameBoard, ref io_SecondLine, ref io_SecondColom, out io_SecondValue);
-        //                roundChecker = eRound.RoundEnds;
-        //                break;
-        //        }
+            return playerSucceeded;
+        }
 
-        //        r_UtilesHandler.CleanScreenAndPrintBoard(m_GameBoard);
-        //        Console.WriteLine(m_GameStatistics);
-        //    }
-        //    while (roundChecker != eRound.RoundEnds);
+        private void playerTurnHandler(Player i_CurrPlayer, eRound i_NextRound, out byte o_LineChosen, out byte o_ColomChosen, out byte o_ValueOfCell)
+        {
+            o_LineChosen = r_Observer.CurrentLineChosen;
+            o_ColomChosen = r_Observer.CurrentColomChosen;
+            i_CurrPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
+            o_ValueOfCell = r_GameBoard[o_LineChosen, o_ColomChosen].Content;
+            m_CurrentRound = i_NextRound;
+        }
 
-        //    if (m_ComputerPlayer != null)
-        //    {
-        //        m_ComputerPlayer.ComputerLearn(
-        //            io_FirstLine,
-        //            io_FirstColom,
-        //            io_FirstValue,
-        //            io_SecondLine,
-        //            io_SecondColom,
-        //            io_SecondValue);
-        //    }
-        //}
+        private bool isGameEnds()
+        {
+            return FirstPlayerPairs + SecondPlayerPairs == (r_GameBoard.Lines * r_GameBoard.Coloms) / 2;
+        }
+
+        public string Winner()
+        {
+            string winner = null; // if the game ends with a draw winner will stay null
+            if(r_FirstPlayer.PairsCount > r_SecondPlayer.PairsCount)
+            {
+                winner = r_FirstPlayer.Name;
+            }
+            else if(r_SecondPlayer.PairsCount > r_FirstPlayer.PairsCount)
+            {
+                winner = r_SecondPlayer.Name;
+            }
+
+            return winner;
+        }
     }
 }

@@ -32,6 +32,7 @@ namespace MemoryGameLogic
                 }
             }
         }
+
         private readonly List<Point> r_UnknownCellsList;
         private readonly bool r_Ai;
         private readonly Dictionary<byte, Point> r_UnMatchedRevealedCells;
@@ -46,17 +47,6 @@ namespace MemoryGameLogic
             r_MatchedRevealedCells = new Dictionary<Point, Point>();
             r_Ai = i_Ai;
             initPointList(i_Lines, i_Coloms);
-        }
-
-        private void initPointList(byte i_Lines, byte i_Coloms)
-        {
-            for (byte i = 0; i < i_Lines; i++)
-            {
-                for (byte j = 0; j < i_Coloms; j++)
-                {
-                    this.r_UnknownCellsList.Add(new Point(i, j));
-                }
-            }
         }
 
         public void ComputerLearn(
@@ -92,45 +82,12 @@ namespace MemoryGameLogic
             }
         }
 
-        private void deleteOpponentMatch(Point i_FirstPoint, Point i_SecondPoint, byte i_FirstValue, byte i_SecondValue)
-        {
-            if (r_UnknownCellsList.Contains(i_FirstPoint))
-            {
-                r_UnknownCellsList.Remove(i_FirstPoint);
-            }
-
-            if (r_UnknownCellsList.Contains(i_SecondPoint))
-            {
-                r_UnknownCellsList.Remove(i_SecondPoint);
-            }
-
-            if (r_UnMatchedRevealedCells.ContainsKey(i_FirstValue))
-            {
-                r_UnMatchedRevealedCells.Remove(i_FirstValue);
-            }
-
-            if (r_UnMatchedRevealedCells.ContainsKey(i_SecondValue))
-            {
-                r_UnMatchedRevealedCells.Remove(i_SecondValue);
-            }
-
-            if (r_MatchedRevealedCells.ContainsKey(i_FirstPoint))
-            {
-                r_MatchedRevealedCells.Remove(i_FirstPoint);
-            }
-
-            if (r_MatchedRevealedCells.ContainsKey(i_SecondPoint))
-            {
-                r_MatchedRevealedCells.Remove(i_SecondPoint);
-            }
-        }
-
         public void PlayTurn(
-            GameBoard i_GameBoard,
-            out byte o_FirstLine,
-            out byte o_FirstColom,
-            out byte o_SecondLine,
-            out byte o_SecondColom)
+           GameBoard i_GameBoard,
+           out byte o_FirstLine,
+           out byte o_FirstColom,
+           out byte o_SecondLine,
+           out byte o_SecondColom)
         {
             Point firstPoint, secondPoint;
             if (r_Ai)
@@ -177,6 +134,50 @@ namespace MemoryGameLogic
             o_FirstColom = firstPoint.Colom;
             o_SecondLine = secondPoint.Line;
             o_SecondColom = secondPoint.Colom;
+        }
+
+        private void initPointList(byte i_Lines, byte i_Coloms)
+        {
+            for (byte i = 0; i < i_Lines; i++)
+            {
+                for (byte j = 0; j < i_Coloms; j++)
+                {
+                    this.r_UnknownCellsList.Add(new Point(i, j));
+                }
+            }
+        }
+
+        private void deleteOpponentMatch(Point i_FirstPoint, Point i_SecondPoint, byte i_FirstValue, byte i_SecondValue)
+        {
+            if (r_UnknownCellsList.Contains(i_FirstPoint))
+            {
+                r_UnknownCellsList.Remove(i_FirstPoint);
+            }
+
+            if (r_UnknownCellsList.Contains(i_SecondPoint))
+            {
+                r_UnknownCellsList.Remove(i_SecondPoint);
+            }
+
+            if (r_UnMatchedRevealedCells.ContainsKey(i_FirstValue))
+            {
+                r_UnMatchedRevealedCells.Remove(i_FirstValue);
+            }
+
+            if (r_UnMatchedRevealedCells.ContainsKey(i_SecondValue))
+            {
+                r_UnMatchedRevealedCells.Remove(i_SecondValue);
+            }
+
+            if (r_MatchedRevealedCells.ContainsKey(i_FirstPoint))
+            {
+                r_MatchedRevealedCells.Remove(i_FirstPoint);
+            }
+
+            if (r_MatchedRevealedCells.ContainsKey(i_SecondPoint))
+            {
+                r_MatchedRevealedCells.Remove(i_SecondPoint);
+            }
         }
 
         private Point getNextMatchedDictionaryKey()

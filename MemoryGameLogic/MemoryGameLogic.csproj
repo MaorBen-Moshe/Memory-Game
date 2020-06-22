@@ -42,9 +42,11 @@
   <ItemGroup>
     <Compile Include="ComputerPlayer.cs" />
     <Compile Include="GameBoard.cs" />
-    <Compile Include="GameControl.cs" />
     <Compile Include="GameManager.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="IObserver.cs" />
+    <Compile Include="Player.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

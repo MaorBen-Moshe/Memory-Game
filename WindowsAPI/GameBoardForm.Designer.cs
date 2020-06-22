@@ -46,9 +46,10 @@
             this.labelCurrentPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCurrentPlayer.AutoSize = true;
+            this.labelCurrentPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.labelCurrentPlayer.Location = new System.Drawing.Point(12, 18);
             this.labelCurrentPlayer.Name = "labelCurrentPlayer";
-            this.labelCurrentPlayer.Size = new System.Drawing.Size(113, 20);
+            this.labelCurrentPlayer.Size = new System.Drawing.Size(128, 20);
             this.labelCurrentPlayer.TabIndex = 0;
             this.labelCurrentPlayer.Text = "Current Player:";
             // 
@@ -57,18 +58,20 @@
             this.labelFirstPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelFirstPlayer.AutoSize = true;
+            this.labelFirstPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.labelFirstPlayer.Location = new System.Drawing.Point(12, 55);
             this.labelFirstPlayer.Name = "labelFirstPlayer";
-            this.labelFirstPlayer.Size = new System.Drawing.Size(86, 20);
+            this.labelFirstPlayer.Size = new System.Drawing.Size(96, 20);
             this.labelFirstPlayer.TabIndex = 1;
             this.labelFirstPlayer.Text = "FirstName:";
             // 
             // labelSecondPlayer
             // 
             this.labelSecondPlayer.AutoSize = true;
+            this.labelSecondPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.labelSecondPlayer.Location = new System.Drawing.Point(12, 96);
             this.labelSecondPlayer.Name = "labelSecondPlayer";
-            this.labelSecondPlayer.Size = new System.Drawing.Size(110, 20);
+            this.labelSecondPlayer.Size = new System.Drawing.Size(121, 20);
             this.labelSecondPlayer.TabIndex = 2;
             this.labelSecondPlayer.Text = "SecondName:";
             // 
@@ -77,7 +80,7 @@
             this.labelCurrentPlayerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCurrentPlayerName.AutoSize = true;
-            this.labelCurrentPlayerName.Location = new System.Drawing.Point(131, 18);
+            this.labelCurrentPlayerName.Location = new System.Drawing.Point(146, 18);
             this.labelCurrentPlayerName.Name = "labelCurrentPlayerName";
             this.labelCurrentPlayerName.Size = new System.Drawing.Size(104, 20);
             this.labelCurrentPlayerName.TabIndex = 3;
@@ -88,7 +91,7 @@
             this.labelFirstPlayerPairs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelFirstPlayerPairs.AutoSize = true;
-            this.labelFirstPlayerPairs.Location = new System.Drawing.Point(131, 55);
+            this.labelFirstPlayerPairs.Location = new System.Drawing.Point(146, 55);
             this.labelFirstPlayerPairs.Name = "labelFirstPlayerPairs";
             this.labelFirstPlayerPairs.Size = new System.Drawing.Size(126, 20);
             this.labelFirstPlayerPairs.TabIndex = 4;
@@ -99,7 +102,7 @@
             this.labelSecondPlayerPairs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelSecondPlayerPairs.AutoSize = true;
-            this.labelSecondPlayerPairs.Location = new System.Drawing.Point(131, 96);
+            this.labelSecondPlayerPairs.Location = new System.Drawing.Point(143, 96);
             this.labelSecondPlayerPairs.Name = "labelSecondPlayerPairs";
             this.labelSecondPlayerPairs.Size = new System.Drawing.Size(146, 20);
             this.labelSecondPlayerPairs.TabIndex = 5;

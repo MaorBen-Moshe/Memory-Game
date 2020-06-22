@@ -89,6 +89,7 @@
             this.textBoxFirstName.Name = "textBoxFirstName";
             this.textBoxFirstName.Size = new System.Drawing.Size(247, 26);
             this.textBoxFirstName.TabIndex = 1;
+            this.textBoxFirstName.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             // 
             // textBoxSecondPlayer
             // 
@@ -101,6 +102,7 @@
             this.textBoxSecondPlayer.Size = new System.Drawing.Size(247, 26);
             this.textBoxSecondPlayer.TabIndex = 3;
             this.textBoxSecondPlayer.Text = "-Computer-";
+            this.textBoxSecondPlayer.TextChanged += new System.EventHandler(this.textBox_TextChanged);
             // 
             // labelBoardSize
             // 

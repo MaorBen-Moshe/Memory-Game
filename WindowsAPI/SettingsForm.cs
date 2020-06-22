@@ -90,8 +90,8 @@ namespace WindowsAPI
             if(ensureNameHasValue())
             {
                 MessageBox.Show(
-                    @"Name cannot be empty!", 
-                    @"Error",
+                    @"Player name cannot be empty!", 
+                    @"Name Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -108,6 +108,19 @@ namespace WindowsAPI
         {
             return string.IsNullOrWhiteSpace(textBoxFirstName.Text) 
                    || string.IsNullOrWhiteSpace(textBoxSecondPlayer.Text);
+        }
+
+        private void textBox_TextChanged(object i_Sender, EventArgs i_E)
+        {
+            TextBox current = i_Sender as TextBox;
+            if(current.Text.Length > 10)
+            {
+                MessageBox.Show(
+                    @"Name can has 10 letters at the most!",
+                    @"Name Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 }

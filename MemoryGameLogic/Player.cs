@@ -39,10 +39,9 @@
             }
         }
 
-        public void PlayTurn(GameBoard i_GameBoard, ref byte io_Line, ref byte io_Colom, out byte o_Value)
+        public void PlayTurn(GameBoard i_GameBoard, byte i_Line, byte i_Colom)
         {
-            o_Value = i_GameBoard[io_Line, io_Colom].Content;
-            i_GameBoard[io_Line, io_Colom].IsRevealed = true;
+            i_GameBoard[i_Line, i_Colom].IsRevealed = true;
         }
     }
 }
