@@ -7,11 +7,15 @@ namespace WindowsAPI
 {
     public partial class SettingsForm : Form
     {
+        private const int k_MinimumBoardLines = 4;
+        private const int k_MaximumBoardLines = 6;
+        private const int k_MinimumBoardColoms = 4;
+        private const int k_MaximumBoardColoms = 6;
         private readonly List<Point> r_BoardSizeList = new List<Point>();
         private byte m_CurrentBoardSizeIndex;
         private GameBoardForm m_BoardForm;
 
-        public SettingsForm()
+        internal SettingsForm()
         {
             intialBoardSizes();
             InitializeComponent();
@@ -19,9 +23,9 @@ namespace WindowsAPI
 
         private void intialBoardSizes()
         {
-            for(int i = 4; i <= 6; i++)
+            for(int i = k_MinimumBoardLines; i <= k_MaximumBoardLines; i++)
             {
-                for(int j = 4; j <= 6; j++)
+                for(int j = k_MinimumBoardColoms; j <= k_MaximumBoardColoms; j++)
                 {
                     if((i * j) % 2 == 0)
                     {
@@ -31,7 +35,7 @@ namespace WindowsAPI
             }
         }
 
-        public string FirstPlayerName
+        private string FirstPlayerName
         {
             get
             {
@@ -39,7 +43,7 @@ namespace WindowsAPI
             }
         }
 
-        public string SecondPlayerName
+        private string SecondPlayerName
         {
             get
             {
@@ -47,7 +51,7 @@ namespace WindowsAPI
             }
         }
 
-        public Point BoardSize
+        private Point BoardSize
         {
             get
             {

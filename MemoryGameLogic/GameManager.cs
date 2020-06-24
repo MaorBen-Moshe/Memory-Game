@@ -46,32 +46,51 @@ namespace MemoryGameLogic
             setRandomlyCurrentPlayer();
         }
 
+        public byte this[int i_Line, int i_Colom]
+        {
+            get
+            {
+                return r_GameBoard[(byte)i_Line, (byte)i_Colom].Content;
+            }
+        }
+
         public Player CurrentPlayer
         {
             get
             {
                 return m_CurrentPlayer;
             }
-
-            set
-            {
-                m_CurrentPlayer = value;
-            }
         }
 
-        public Player FirstPlayer
+        public string FirstPlayerName
         {
             get
             {
-                return r_FirstPlayer;
+                return r_FirstPlayer.Name;
             }
         }
 
-        public Player SecondPlayer
+        public string SecondPlayerName
         {
             get
             {
-                return r_SecondPlayer;
+                return r_SecondPlayer.Name;
+            }
+        }
+
+        public int FirstPlayerPairsCount
+        {
+            get
+            {
+                return r_FirstPlayer.PairsCount;
+            }
+        }
+
+        public int SecondPlayerPairsCount
+        {
+            get
+            {
+                return r_SecondPlayer.PairsCount;
             }
         }
 
@@ -86,14 +105,6 @@ namespace MemoryGameLogic
                 }
 
                 return toReturn;
-            }
-        }
-
-        public GameBoard GameBoard
-        {
-            get
-            {
-                return r_GameBoard;
             }
         }
 
@@ -123,11 +134,6 @@ namespace MemoryGameLogic
 
         public void RunGame()
         {
-            playTurn();
-        }
-
-        private void playTurn()
-        {
             bool playerFoundPair = m_GameToggle 
                                        ? playerTurn(r_FirstPlayer) 
                                        : setRivalTurn();
@@ -141,7 +147,7 @@ namespace MemoryGameLogic
             m_IsGameEnds = isGameEnds();
         }
 
-        public string Winner()
+        public string WinnerName()
         {
             string winner = null; // if the game ends with a draw winner will stay null
             if (r_FirstPlayer.PairsCount > r_SecondPlayer.PairsCount)
@@ -156,12 +162,17 @@ namespace MemoryGameLogic
             return winner;
         }
 
-        public void setNewBoard()
+        public void setNewGameValues()
         {
             r_GameBoard.Clear();
             r_GameBoard.intialBoardWithValues();
             r_FirstPlayer.PairsCount = 0;
             r_SecondPlayer.PairsCount = 0;
+            if(r_SecondPlayer is ComputerPlayer)
+            {
+                (r_SecondPlayer as ComputerPlayer).SetNewGameValues((byte)BoardLines, (byte)BoardColoms, Computer.Ai);
+            }
+
             setRandomlyCurrentPlayer();
         }
 
@@ -185,6 +196,11 @@ namespace MemoryGameLogic
             {
                 r_SecondPlayer.PairsCount++;
                 matchFound = true;
+            }
+            else
+            {
+                r_GameBoard[firstLine, firstColom].IsRevealed = false;
+                r_GameBoard[secondLine, secondColom].IsRevealed = false;
             }
 
             m_CurrentRound = eRound.EndRound;
@@ -219,6 +235,11 @@ namespace MemoryGameLogic
                 {
                     i_CurrPlayer.PairsCount++;
                     playerSucceeded = true;
+                }
+                else
+                {
+                    r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].IsRevealed = false;
+                    r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].IsRevealed = false;
                 }
             }
 

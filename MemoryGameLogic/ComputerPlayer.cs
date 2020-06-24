@@ -6,15 +6,16 @@ namespace MemoryGameLogic
     public delegate void OnComputerChoose(
         ref Player.Point i_FirstCardChoose,
         ref Player.Point i_SecondCardChoose);
+
     public class ComputerPlayer : Player
     {
         public event OnComputerChoose OnComputerChoose;
 
         private readonly List<Point> r_UnknownCellsList;
-        private bool m_Ai;
         private readonly Dictionary<byte, Point> r_UnMatchedRevealedCells;
         private readonly Dictionary<Point, Point> r_MatchedRevealedCells;
         private readonly Random r_Rnd = new Random();
+        private bool m_Ai;
 
         public ComputerPlayer(byte i_Lines, byte i_Coloms, bool i_Ai = false)
         : base("Computer")
@@ -26,8 +27,22 @@ namespace MemoryGameLogic
             initPointList(i_Lines, i_Coloms);
         }
 
+        internal void SetNewGameValues(byte i_Lines, byte i_Coloms, bool i_IsAi)
+        {
+            m_Ai = i_IsAi;
+            r_UnknownCellsList.Clear();
+            initPointList(i_Lines, i_Coloms);
+            r_UnMatchedRevealedCells.Clear();
+            r_MatchedRevealedCells.Clear();
+        }
+
         public bool Ai
         {
+            get
+            {
+                return m_Ai;
+            }
+
             set
             {
                 m_Ai = value;
@@ -85,7 +100,7 @@ namespace MemoryGameLogic
                 }
                 else
                 {
-                    firstPoint = pickRandomCell();
+                    firstPoint = pickRandomCell(i_GameBoard);
                     byte firstValue = i_GameBoard[firstPoint.Line, firstPoint.Colom].Content;
                     if (r_UnMatchedRevealedCells.ContainsKey(firstValue))
                     {
@@ -94,7 +109,7 @@ namespace MemoryGameLogic
                     }
                     else
                     {
-                        secondPoint = pickRandomCell();
+                        secondPoint = pickRandomCell(i_GameBoard);
                         byte secondValue = i_GameBoard[secondPoint.Line, secondPoint.Colom].Content;
                         if (!firstValue.Equals(secondValue))
                         {
@@ -106,8 +121,8 @@ namespace MemoryGameLogic
             }
             else
             {
-                firstPoint = pickRandomCell();
-                secondPoint = pickRandomCell();
+                firstPoint = pickRandomCell(i_GameBoard);
+                secondPoint = pickRandomCell(i_GameBoard);
                 if (!firstPoint.Equals(secondPoint))
                 {
                     r_UnknownCellsList.Add(firstPoint);
@@ -198,11 +213,24 @@ namespace MemoryGameLogic
             }
         }
 
-        private Point pickRandomCell()
+        private Point pickRandomCell(GameBoard i_GameBoard)
         {
-            int randomPlace = r_Rnd.Next() % r_UnknownCellsList.Count;
-            Point randomPoint = r_UnknownCellsList[randomPlace];
-            r_UnknownCellsList.Remove(randomPoint);
+            Point randomPoint;
+            do
+            {
+                int randomPlace = r_Rnd.Next() % r_UnknownCellsList.Count;
+                randomPoint = r_UnknownCellsList[randomPlace];
+                if(i_GameBoard[randomPoint.Line, randomPoint.Colom].IsRevealed == true)
+                {
+                    r_UnknownCellsList.Remove(randomPoint);
+                    continue;
+                }
+
+                r_UnknownCellsList.Remove(randomPoint);
+                break;
+            }
+            while(true);
+
             return randomPoint;
         }
     }

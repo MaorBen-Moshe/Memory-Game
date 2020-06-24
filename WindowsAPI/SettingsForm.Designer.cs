@@ -119,7 +119,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonBoardSize.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.buttonBoardSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.buttonBoardSize.Font = new System.Drawing.Font("Agency FB", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonBoardSize.Location = new System.Drawing.Point(53, 172);
             this.buttonBoardSize.Name = "buttonBoardSize";
             this.buttonBoardSize.Size = new System.Drawing.Size(150, 104);

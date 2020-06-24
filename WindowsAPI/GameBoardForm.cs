@@ -38,7 +38,7 @@ namespace WindowsAPI
             r_Matrix = new Button[i_BoardSize.X, i_BoardSize.Y];
             initialBoardButtons();
             intialStatisticsPanel();
-            r_GameControler.OnPlayerChooseCard += GameControler_OnOnPlayerChooseCard;
+            r_GameControler.OnPlayerChooseCard += GameControler_OnPlayerChooseCard;
             if(i_IsAgainstComputer)
             {
                 setGameLevel();
@@ -46,7 +46,7 @@ namespace WindowsAPI
             }
         }
 
-        private void GameControler_OnOnPlayerChooseCard(out byte i_Currentline, out byte i_Currentcolom)
+        private void GameControler_OnPlayerChooseCard(out byte i_Currentline, out byte i_Currentcolom)
         {
             i_Currentline = m_CurrentButtonLine;
             i_Currentcolom = m_CurrentButtonColom;
@@ -63,22 +63,13 @@ namespace WindowsAPI
                 @"Game Level",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-            if(result == DialogResult.Yes)
-            {
-                r_GameControler.Computer.Ai = true;
-            }
-            else
-            {
-                r_GameControler.Computer.Ai = false;
-            }
+            r_GameControler.Computer.Ai = result == DialogResult.Yes;
         }
         
         private void Computer_OnComputerChoose(ref Player.Point i_FirstChoose, ref Player.Point i_SecondChoose)
         {
-            r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom].BackColor = labelSecondPlayer.BackColor;
-            r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom].Text = r_GameValues[r_GameControler.GameBoard[i_FirstChoose.Line, i_FirstChoose.Colom].Content].ToString();
-            r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom].BackColor = labelSecondPlayer.BackColor;
-            r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom].Text = r_GameValues[r_GameControler.GameBoard[i_SecondChoose.Line, i_SecondChoose.Colom].Content].ToString();
+            cardChoosekHandler(i_FirstChoose.Line, i_FirstChoose.Colom);
+            cardChoosekHandler(i_SecondChoose.Line, i_SecondChoose.Colom);
             m_FirstClicked = r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom];
             m_SecondClicked = r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom];
             TimerCards.Start();
@@ -93,7 +84,6 @@ namespace WindowsAPI
             {
                 for(int j = 0; j < r_GameControler.BoardColoms; j++)
                 {
-                    r_GameControler.GameBoard[(byte)i, (byte)j].IsRevealed = false;
                     r_Matrix[i, j] = new Button
                                      {
                                          Name = i + " " + j
@@ -135,12 +125,12 @@ namespace WindowsAPI
                         if (m_FirstClicked == null)
                         {
                             m_FirstClicked = i_Sender as Button;
-                            cardClickHandler();
+                            cardChoosekHandler(m_CurrentButtonLine, m_CurrentButtonColom);
                             return;
                         }
 
                         m_SecondClicked = i_Sender as Button;
-                        cardClickHandler();
+                        cardChoosekHandler(m_CurrentButtonLine, m_CurrentButtonColom);
                         TimerCards.Start();
                     }
                 }
@@ -149,41 +139,34 @@ namespace WindowsAPI
 
         private void setStatisticsGamePanel()
         {
-            labelFirstPlayer.Text = r_GameControler.FirstPlayer.Name;
+            labelFirstPlayer.Text = r_GameControler.FirstPlayerName;
             labelFirstPlayer.BackColor = Color.MediumPurple;
-            labelSecondPlayer.Text = r_GameControler.SecondPlayer.Name;
+            labelFirstPlayerPairs.BackColor = labelFirstPlayer.BackColor;
+            labelSecondPlayer.Text = r_GameControler.SecondPlayerName;
             labelSecondPlayer.BackColor = Color.MediumSeaGreen;
+            labelSecondPlayerPairs.BackColor = labelSecondPlayer.BackColor;
+            labelFirstPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.FirstPlayerPairsCount);
+            labelSecondPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.SecondPlayerPairsCount);
             labelCurrentPlayerName.Text = r_GameControler.CurrentPlayer.Name;
-            labelCurrentPlayer.BackColor = r_GameControler.CurrentPlayer.Name.Equals(labelFirstPlayer.Text)
-                                               ? labelFirstPlayer.BackColor
-                                               : labelSecondPlayer.BackColor;
-            labelCurrentPlayerName.BackColor = labelCurrentPlayer.BackColor;
-            labelFirstPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.FirstPlayer.PairsCount);
-            labelSecondPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.SecondPlayer.PairsCount);
+            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayer.Name.Equals(r_GameControler.FirstPlayerName)
+                                                   ? labelFirstPlayer.BackColor
+                                                   : labelSecondPlayer.BackColor;
+            labelCurrentPlayer.BackColor = labelCurrentPlayerName.BackColor;
         }
 
         private void intialStatisticsPanel()
         {
-            labelFirstPlayer.Text = r_GameControler.FirstPlayer.Name;
-            labelFirstPlayer.BackColor = Color.MediumPurple;
-            labelSecondPlayer.Text = r_GameControler.SecondPlayer.Name;
-            labelSecondPlayer.BackColor = Color.MediumSeaGreen;
-            labelFirstPlayerPairs.Text = labelSecondPlayerPairs.Text = @"0 Pair(s)";
-            labelCurrentPlayerName.Text = r_GameControler.CurrentPlayer.Name;
-            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayer.Name.Equals(r_GameControler.FirstPlayer.Name)
-                                                   ? labelFirstPlayer.BackColor
-                                                   : labelSecondPlayer.BackColor;
-            labelCurrentPlayer.BackColor = labelCurrentPlayerName.BackColor;
+            setStatisticsGamePanel();
             labelFirstPlayerPairs.Left = labelFirstPlayer.Left + labelFirstPlayer.Width + 10;
             labelSecondPlayerPairs.Left = labelSecondPlayer.Left + labelSecondPlayer.Width + 10;
             panelStatistics.Top = r_Matrix[r_GameControler.BoardLines - 1, 0].Bottom + 20;
             panelStatistics.Left += r_Matrix[r_GameControler.BoardLines - 1, 0].Left - 10;
         }
 
-        private void cardClickHandler()
+        private void cardChoosekHandler(byte i_CurrentLine, byte i_CurrentColom)
         {
-            r_Matrix[m_CurrentButtonLine, m_CurrentButtonColom].BackColor = labelCurrentPlayer.BackColor;
-            r_Matrix[m_CurrentButtonLine, m_CurrentButtonColom].Text = r_GameValues[r_GameControler.GameBoard[m_CurrentButtonLine, m_CurrentButtonColom].Content].ToString();
+            r_Matrix[i_CurrentLine, i_CurrentColom].BackColor = labelCurrentPlayer.BackColor;
+            r_Matrix[i_CurrentLine, i_CurrentColom].Text = r_GameValues[r_GameControler[i_CurrentLine, i_CurrentColom]].ToString();
         }
 
         private void TimerCards_Tick(object i_Sender, EventArgs i_E)
@@ -191,10 +174,6 @@ namespace WindowsAPI
             TimerCards.Stop();
             if (m_FirstClicked.Text != m_SecondClicked.Text)
             {
-                string[] firstButtonLocation = m_FirstClicked.Name.Split(' ');
-                string[] secondButtonLocation = m_SecondClicked.Name.Split(' ');
-                r_GameControler.GameBoard[byte.Parse(firstButtonLocation[0]), byte.Parse(firstButtonLocation[1])].IsRevealed = false;
-                r_GameControler.GameBoard[byte.Parse(secondButtonLocation[0]), byte.Parse(secondButtonLocation[1])].IsRevealed = false;
                 m_FirstClicked.BackColor = m_SecondClicked.BackColor = default;
                 m_FirstClicked.Text = m_SecondClicked.Text = null;
             }
@@ -205,8 +184,7 @@ namespace WindowsAPI
             {
                 setWinnersMessage();
             }
-
-            if(r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
+            else if(r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
             {
                 r_GameControler.RunGame();
             }
@@ -214,7 +192,7 @@ namespace WindowsAPI
 
         private void setWinnersMessage()
         {
-            string winnerName = r_GameControler.Winner();
+            string winnerName = r_GameControler.WinnerName();
             StringBuilder winnerMessage = new StringBuilder();
             winnerMessage.Append(winnerName != null
                                        ? string.Format(
@@ -226,7 +204,7 @@ namespace WindowsAPI
             DialogResult dialogResult = MessageBox.Show(
                 this,
                 winnerMessage.ToString(),
-                @"Set Winner",
+                @"Set WinnerName",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Information);
 
@@ -234,7 +212,7 @@ namespace WindowsAPI
             {
                 this.Close();
             }
-            else // new game
+            else
             {
                 setNewGame();
             }
@@ -242,7 +220,7 @@ namespace WindowsAPI
 
         private void setNewGame()
         {
-            r_GameControler.setNewBoard();
+            r_GameControler.setNewGameValues();
             createBoardValues();
             foreach(Button currentButton in r_Matrix)
             {
@@ -264,17 +242,17 @@ namespace WindowsAPI
             }
 
             r_GameValues.Clear();
-            for (byte i = 0; i < r_GameControler.GameBoard.Lines; i++)
+            for (byte i = 0; i < r_GameControler.BoardLines; i++)
             {
-                for (byte j = 0; j < r_GameControler.GameBoard.Coloms; j++)
+                for (byte j = 0; j < r_GameControler.BoardColoms; j++)
                 {
-                    if (r_GameValues.ContainsKey(r_GameControler.GameBoard[i, j].Content))
+                    if (r_GameValues.ContainsKey(r_GameControler[i, j]))
                     {
                         continue;
                     }
 
                     char currentLetter = pickRandomLetter(inputValues);
-                    r_GameValues.Add(r_GameControler.GameBoard[i, j].Content, currentLetter);
+                    r_GameValues.Add(r_GameControler[i, j], currentLetter);
                 }
             }
         }

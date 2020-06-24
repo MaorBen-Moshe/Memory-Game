@@ -26,7 +26,7 @@ namespace MemoryGameLogic
                 }
             }
 
-            public bool IsRevealed
+            internal bool IsRevealed
             {
                 get
                 {
