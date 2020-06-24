@@ -7,7 +7,7 @@ using MemoryGameLogic;
 
 namespace WindowsAPI
 {
-    public partial class GameBoardForm : Form, IObserver
+    public partial class GameBoardForm : Form
     {
         private const int k_CardStartHorizonPos = 50;
         private const int k_CardStartVerticalPos = 10;
@@ -34,16 +34,22 @@ namespace WindowsAPI
         {
             InitializeComponent();
             r_GameValues = new Dictionary<byte, char>();
-            r_GameControler = new GameManager(i_FirstPlayerName, i_SecondPlayerName, i_BoardSize.X, i_BoardSize.Y, this, i_IsAgainstComputer);
+            r_GameControler = new GameManager(i_FirstPlayerName, i_SecondPlayerName, i_BoardSize.X, i_BoardSize.Y, i_IsAgainstComputer);
             r_Matrix = new Button[i_BoardSize.X, i_BoardSize.Y];
             initialBoardButtons();
             intialStatisticsPanel();
-
+            r_GameControler.OnPlayerChooseCard += GameControler_OnOnPlayerChooseCard;
             if(i_IsAgainstComputer)
             {
                 setGameLevel();
                 r_GameControler.Computer.OnComputerChoose += Computer_OnComputerChoose;
             }
+        }
+
+        private void GameControler_OnOnPlayerChooseCard(out byte i_Currentline, out byte i_Currentcolom)
+        {
+            i_Currentline = m_CurrentButtonLine;
+            i_Currentcolom = m_CurrentButtonColom;
         }
 
         private void setGameLevel()
@@ -66,38 +72,16 @@ namespace WindowsAPI
                 r_GameControler.Computer.Ai = false;
             }
         }
-
+        
         private void Computer_OnComputerChoose(ref Player.Point i_FirstChoose, ref Player.Point i_SecondChoose)
         {
             r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom].BackColor = labelSecondPlayer.BackColor;
             r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom].Text = r_GameValues[r_GameControler.GameBoard[i_FirstChoose.Line, i_FirstChoose.Colom].Content].ToString();
-            System.Threading.Thread.Sleep(1500);
             r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom].BackColor = labelSecondPlayer.BackColor;
             r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom].Text = r_GameValues[r_GameControler.GameBoard[i_SecondChoose.Line, i_SecondChoose.Colom].Content].ToString();
             m_FirstClicked = r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom];
             m_SecondClicked = r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom];
             TimerCards.Start();
-            setStatisticsGamePanel();
-            if(r_GameControler.IsGameEnds)
-            {
-                setWinnersMessage();
-            }
-        }
-
-        public byte CurrentLineChosen
-        {
-            get
-            {
-                return m_CurrentButtonLine;
-            }
-        }
-
-        public byte CurrentColomChosen
-        {
-            get
-            {
-                return m_CurrentButtonColom;
-            }
         }
 
         private void initialBoardButtons()
@@ -160,17 +144,6 @@ namespace WindowsAPI
                         TimerCards.Start();
                     }
                 }
-
-                if (r_GameControler.CurrentRound == GameManager.eRound.EndRound)
-                {
-                    r_GameControler.CurrentRound = GameManager.eRound.FirstRound;
-                    setStatisticsGamePanel();
-                }
-
-                if (r_GameControler.IsGameEnds)
-                {
-                    setWinnersMessage();
-                }
             }
         }
 
@@ -227,6 +200,16 @@ namespace WindowsAPI
             }
 
             m_FirstClicked = m_SecondClicked = null;
+            setStatisticsGamePanel();
+            if (r_GameControler.IsGameEnds)
+            {
+                setWinnersMessage();
+            }
+
+            if(r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
+            {
+                r_GameControler.RunGame();
+            }
         }
 
         private void setWinnersMessage()

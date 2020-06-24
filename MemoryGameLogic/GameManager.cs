@@ -2,16 +2,19 @@
 
 namespace MemoryGameLogic
 {
+    public delegate void OnPlayerChooseCard(out byte i_CurrentLine, out byte i_CurrentColom);
+
     public class GameManager
     {
-        public enum eRound
+        public event OnPlayerChooseCard OnPlayerChooseCard;
+
+        private enum eRound
         {
             FirstRound,
             SecondRound,
             EndRound
         }
 
-        private readonly IObserver r_Observer;
         private readonly GameBoard r_GameBoard;
         private readonly Random r_Rnd;
         private readonly Player r_FirstPlayer;
@@ -32,7 +35,6 @@ namespace MemoryGameLogic
                            string i_SecondPlayer,
                            int i_BoardLines,
                            int i_BoardColoms,
-                           IObserver i_Observer,
                            bool i_IsAgainstComputer)
         {
             r_GameBoard = new GameBoard((byte)i_BoardLines, (byte)i_BoardColoms);
@@ -40,7 +42,6 @@ namespace MemoryGameLogic
             r_SecondPlayer = i_IsAgainstComputer ?
                                  new ComputerPlayer((byte)i_BoardLines, (byte)i_BoardColoms)
                                  : new Player(i_SecondPlayer);
-            r_Observer = i_Observer;
             r_Rnd = new Random();
             setRandomlyCurrentPlayer();
         }
@@ -96,21 +97,6 @@ namespace MemoryGameLogic
             }
         }
 
-        public eRound CurrentRound
-        {
-            get
-            {
-                return m_CurrentRound;
-            }
-            set
-            {
-                if(Enum.IsDefined(typeof(eRound), value))
-                {
-                    m_CurrentRound = value;
-                }
-            }
-        }
-
         public bool IsGameEnds
         {
             get
@@ -148,7 +134,8 @@ namespace MemoryGameLogic
             if (m_CurrentRound == eRound.EndRound)
             { 
                 m_GameToggle = playerFoundPair ? m_GameToggle : !m_GameToggle; 
-                m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
+                m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer; 
+                m_CurrentRound = eRound.FirstRound;
             }
             
             m_IsGameEnds = isGameEnds();
@@ -240,8 +227,8 @@ namespace MemoryGameLogic
 
         private void playerTurnHandler(Player i_CurrPlayer, eRound i_NextRound, out byte o_LineChosen, out byte o_ColomChosen, out byte o_ValueOfCell)
         {
-            o_LineChosen = r_Observer.CurrentLineChosen;
-            o_ColomChosen = r_Observer.CurrentColomChosen;
+            o_LineChosen = o_ColomChosen = default;
+            OnPlayerChooseCard?.Invoke(out o_LineChosen, out o_ColomChosen);
             i_CurrPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
             o_ValueOfCell = r_GameBoard[o_LineChosen, o_ColomChosen].Content;
             m_CurrentRound = i_NextRound;
@@ -254,8 +241,16 @@ namespace MemoryGameLogic
 
         private void setRandomlyCurrentPlayer()
         {
-            m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
-            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
+            if(Computer != null)
+            {
+                m_GameToggle = true;
+                m_CurrentPlayer = r_FirstPlayer;
+            }
+            else
+            {
+                m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
+                m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
+            }
         }
     }
 }

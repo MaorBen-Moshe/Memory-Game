@@ -43,7 +43,6 @@
     <Compile Include="ComputerPlayer.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="GameManager.cs" />
-    <Compile Include="IObserver.cs" />
     <Compile Include="Player.cs">
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
