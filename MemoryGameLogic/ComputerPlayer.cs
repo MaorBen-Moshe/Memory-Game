@@ -3,45 +3,18 @@ using System.Collections.Generic;
 
 namespace MemoryGameLogic
 {
+    public delegate void OnComputerChoose(
+        ref Player.Point i_FirstCardChoose,
+        ref Player.Point i_SecondCardChoose);
     public class ComputerPlayer : Player
     {
-        public event Action OnComputerChoose;
-
-        public struct Point
-        {
-            private byte m_Line;
-            private byte m_Colom;
-
-            public Point(byte i_Line, byte i_Colom)
-            {
-                this.m_Colom = i_Colom;
-                this.m_Line = i_Line;
-            }
-
-            public byte Line
-            {
-                get
-                {
-                    return m_Line;
-                }
-            }
-
-            public byte Colom
-            {
-                get
-                {
-                    return m_Colom;
-                }
-            }
-        }
+        public event OnComputerChoose OnComputerChoose;
 
         private readonly List<Point> r_UnknownCellsList;
         private bool m_Ai;
         private readonly Dictionary<byte, Point> r_UnMatchedRevealedCells;
         private readonly Dictionary<Point, Point> r_MatchedRevealedCells;
         private readonly Random r_Rnd = new Random();
-        private int m_CurrentLineChoose;
-        private int m_CurrentColomChoose;
 
         public ComputerPlayer(byte i_Lines, byte i_Coloms, bool i_Ai = false)
         : base("Computer")
@@ -51,22 +24,6 @@ namespace MemoryGameLogic
             r_MatchedRevealedCells = new Dictionary<Point, Point>();
             m_Ai = i_Ai;
             initPointList(i_Lines, i_Coloms);
-        }
-
-        public int CurrentLineChoose
-        {
-            get
-            {
-                return m_CurrentLineChoose;
-            }
-        }
-
-        public int CurrentColomChoose
-        {
-            get
-            {
-                return m_CurrentColomChoose;
-            }
         }
 
         public bool Ai
@@ -123,26 +80,21 @@ namespace MemoryGameLogic
                 if (r_MatchedRevealedCells.Keys.Count != 0)
                 {
                     firstPoint = getNextMatchedDictionaryKey();
-                    setInvoker(i_GameBoard, firstPoint);
                     secondPoint = r_MatchedRevealedCells[firstPoint];
-                    setInvoker(i_GameBoard, secondPoint);
                     r_MatchedRevealedCells.Remove(firstPoint);
                 }
                 else
                 {
                     firstPoint = pickRandomCell();
-                    setInvoker(i_GameBoard, firstPoint);
                     byte firstValue = i_GameBoard[firstPoint.Line, firstPoint.Colom].Content;
                     if (r_UnMatchedRevealedCells.ContainsKey(firstValue))
                     {
                         secondPoint = r_UnMatchedRevealedCells[firstValue];
-                        setInvoker(i_GameBoard, secondPoint);
                         this.r_UnMatchedRevealedCells.Remove(firstValue);
                     }
                     else
                     {
                         secondPoint = pickRandomCell();
-                        setInvoker(i_GameBoard, secondPoint);
                         byte secondValue = i_GameBoard[secondPoint.Line, secondPoint.Colom].Content;
                         if (!firstValue.Equals(secondValue))
                         {
@@ -155,9 +107,7 @@ namespace MemoryGameLogic
             else
             {
                 firstPoint = pickRandomCell();
-                setInvoker(i_GameBoard, firstPoint);
                 secondPoint = pickRandomCell();
-                setInvoker(i_GameBoard, secondPoint);
                 if (!firstPoint.Equals(secondPoint))
                 {
                     r_UnknownCellsList.Add(firstPoint);
@@ -165,18 +115,13 @@ namespace MemoryGameLogic
                 }
             }
 
+            i_GameBoard[firstPoint.Line, firstPoint.Colom].IsRevealed = true;
+            i_GameBoard[secondPoint.Line, secondPoint.Colom].IsRevealed = true;
+            OnComputerChoose?.Invoke(ref firstPoint, ref secondPoint);
             o_FirstLine = firstPoint.Line;
             o_FirstColom = firstPoint.Colom;
             o_SecondLine = secondPoint.Line;
             o_SecondColom = secondPoint.Colom;
-        }
-
-        private void setInvoker(GameBoard i_GameBoard, Point i_CurrentPlaceChoose)
-        {
-            m_CurrentLineChoose = i_CurrentPlaceChoose.Line;
-            m_CurrentColomChoose = i_CurrentPlaceChoose.Colom;
-            i_GameBoard[(byte)m_CurrentLineChoose, (byte)m_CurrentColomChoose].IsRevealed = true;
-            OnComputerChoose?.Invoke();
         }
 
         private void initPointList(byte i_Lines, byte i_Coloms)

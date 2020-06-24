@@ -1,7 +1,37 @@
-﻿namespace MemoryGameLogic
+﻿using System.Runtime.InteropServices;
+
+namespace MemoryGameLogic
 {
     public class Player
     {
+        public struct Point
+        {
+            private byte m_Line;
+            private byte m_Colom;
+
+            public Point(byte i_Line, byte i_Colom)
+            {
+                this.m_Colom = i_Colom;
+                this.m_Line = i_Line;
+            }
+
+            public byte Line
+            {
+                get
+                {
+                    return m_Line;
+                }
+            }
+
+            public byte Colom
+            {
+                get
+                {
+                    return m_Colom;
+                }
+            }
+        }
+
         protected string m_Name;
         protected byte m_PairsCounter;
 

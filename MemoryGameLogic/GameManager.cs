@@ -4,9 +4,7 @@ namespace MemoryGameLogic
 {
     public class GameManager
     {
-        public event Action OnComputerTurn;
-
-        private enum eRound
+        public enum eRound
         {
             FirstRound,
             SecondRound,
@@ -20,6 +18,7 @@ namespace MemoryGameLogic
         private readonly Player r_SecondPlayer; // can be computer or regular
         private Player m_CurrentPlayer;
         private bool m_GameToggle;
+        private bool m_IsGameEnds;
         private byte m_FirstLineChosen;
         private byte m_FirstColomChosen;
         private byte m_FirstValueFound;
@@ -29,22 +28,21 @@ namespace MemoryGameLogic
         private eRound m_CurrentRound = eRound.FirstRound;
 
         public GameManager(
-            string i_FirstPlayer,
+                           string i_FirstPlayer,
                            string i_SecondPlayer,
                            int i_BoardLines,
                            int i_BoardColoms,
                            IObserver i_Observer,
-                           bool i_AgainstComputer = false)
+                           bool i_IsAgainstComputer)
         {
             r_GameBoard = new GameBoard((byte)i_BoardLines, (byte)i_BoardColoms);
             r_FirstPlayer = new Player(i_FirstPlayer);
-            r_SecondPlayer = i_AgainstComputer ?
+            r_SecondPlayer = i_IsAgainstComputer ?
                                  new ComputerPlayer((byte)i_BoardLines, (byte)i_BoardColoms)
                                  : new Player(i_SecondPlayer);
             r_Observer = i_Observer;
             r_Rnd = new Random();
-            m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
-            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
+            setRandomlyCurrentPlayer();
         }
 
         public Player CurrentPlayer
@@ -57,6 +55,22 @@ namespace MemoryGameLogic
             set
             {
                 m_CurrentPlayer = value;
+            }
+        }
+
+        public Player FirstPlayer
+        {
+            get
+            {
+                return r_FirstPlayer;
+            }
+        }
+
+        public Player SecondPlayer
+        {
+            get
+            {
+                return r_SecondPlayer;
             }
         }
 
@@ -82,6 +96,29 @@ namespace MemoryGameLogic
             }
         }
 
+        public eRound CurrentRound
+        {
+            get
+            {
+                return m_CurrentRound;
+            }
+            set
+            {
+                if(Enum.IsDefined(typeof(eRound), value))
+                {
+                    m_CurrentRound = value;
+                }
+            }
+        }
+
+        public bool IsGameEnds
+        {
+            get
+            {
+                return m_IsGameEnds;
+            }
+        }
+
         public int BoardLines
         {
             get
@@ -98,61 +135,23 @@ namespace MemoryGameLogic
             }
         }
 
-        public int FirstPlayerPairs
+        public void RunGame()
         {
-            get
-            {
-                return r_FirstPlayer.PairsCount;
-            }
-
-            set
-            {
-                r_FirstPlayer.PairsCount = 0;
-            }
+            playTurn();
         }
 
-        public int SecondPlayerPairs
+        private void playTurn()
         {
-            get
-            {
-                return r_SecondPlayer.PairsCount;
-            }
-
-            set
-            {
-                r_SecondPlayer.PairsCount = 0;
-            }
-        }
-
-        public string FirstPlayerName
-        {
-            get
-            {
-                return r_FirstPlayer.Name;
-            }
-        }
-
-        public string SecondPlayerName
-        {
-            get
-            {
-                return r_SecondPlayer.Name;
-            }
-        }
-
-        public bool PlayGame()
-        {
-            bool playerFoundPair = m_GameToggle
-                                       ? playerTurn(r_FirstPlayer)
+            bool playerFoundPair = m_GameToggle 
+                                       ? playerTurn(r_FirstPlayer) 
                                        : setRivalTurn();
-            if(m_CurrentRound == eRound.EndRound)
-            {
-                m_GameToggle = playerFoundPair ? m_GameToggle : !m_GameToggle;
-                m_CurrentRound = eRound.FirstRound;
+            if (m_CurrentRound == eRound.EndRound)
+            { 
+                m_GameToggle = playerFoundPair ? m_GameToggle : !m_GameToggle; 
                 m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
             }
-
-            return isGameEnds();
+            
+            m_IsGameEnds = isGameEnds();
         }
 
         public string Winner()
@@ -176,13 +175,7 @@ namespace MemoryGameLogic
             r_GameBoard.intialBoardWithValues();
             r_FirstPlayer.PairsCount = 0;
             r_SecondPlayer.PairsCount = 0;
-            m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
-            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
-        }
-
-        public void OnComputerPlay()
-        {
-            OnComputerTurn?.Invoke();
+            setRandomlyCurrentPlayer();
         }
 
         private bool setRivalTurn()
@@ -256,7 +249,13 @@ namespace MemoryGameLogic
 
         private bool isGameEnds()
         {
-            return FirstPlayerPairs + SecondPlayerPairs == (r_GameBoard.Lines * r_GameBoard.Coloms) / 2;
+            return r_FirstPlayer.PairsCount + r_SecondPlayer.PairsCount == (r_GameBoard.Lines * r_GameBoard.Coloms) / 2;
+        }
+
+        private void setRandomlyCurrentPlayer()
+        {
+            m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
+            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
         }
     }
 }
