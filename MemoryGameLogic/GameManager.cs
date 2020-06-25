@@ -2,13 +2,11 @@
 
 namespace MemoryGameLogic
 {
-    public delegate void OnPlayerChooseCard(out byte i_CurrentLine, out byte i_CurrentColom);
+    public delegate void OnCurrentCardChosen(out byte i_CurrentLine, out byte i_CurrentColom);
 
     public class GameManager
     {
-        public event OnPlayerChooseCard OnPlayerChooseCard;
-
-        public event Action OnGameEnds;
+        public event OnCurrentCardChosen OnPlayerChooseCard;
 
         private enum eRound
         {
@@ -146,11 +144,6 @@ namespace MemoryGameLogic
                 m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer; 
                 m_CurrentRound = eRound.FirstRound;
             }
-            
-            if(IsGameEnds)
-            {
-                OnGameEnds?.Invoke();
-            }
         }
 
         public void setNewGameValues()
@@ -239,8 +232,7 @@ namespace MemoryGameLogic
 
         private void playerTurnHandler(Player i_CurrPlayer, eRound i_NextRound, out byte o_LineChosen, out byte o_ColomChosen, out byte o_ValueOfCell)
         {
-            o_LineChosen = o_ColomChosen = default;
-            OnPlayerChooseCard?.Invoke(out o_LineChosen, out o_ColomChosen);
+            OnCurrentCardChosen(out o_LineChosen, out o_ColomChosen);
             i_CurrPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
             o_ValueOfCell = r_GameBoard[o_LineChosen, o_ColomChosen].Content;
             m_CurrentRound = i_NextRound;
@@ -258,6 +250,12 @@ namespace MemoryGameLogic
                 m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
                 m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
             }
+        }
+
+        protected virtual void OnCurrentCardChosen(out byte i_CurrentLine, out byte i_CurrentColom)
+        {
+            i_CurrentLine = i_CurrentColom = default;
+            OnPlayerChooseCard?.Invoke(out i_CurrentLine, out i_CurrentColom);
         }
     }
 }

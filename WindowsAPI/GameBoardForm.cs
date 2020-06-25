@@ -39,7 +39,6 @@ namespace WindowsAPI
             initialBoardButtons();
             intialStatisticsPanel();
             r_GameControler.OnPlayerChooseCard += GameControler_OnPlayerChooseCard;
-            r_GameControler.OnGameEnds += setWinnersMessage;
             r_GameControler.FirstPlayer.OnPlayerTurn += Player_OnPlayerTurn;
             if(i_IsAgainstComputer)
             {
@@ -112,10 +111,10 @@ namespace WindowsAPI
         {
             i_CurrentButton.Location = new Point(i_HorizonPos, i_VerticalPos);
             i_CurrentButton.Size = new Size(k_CardWidth, k_CardHeight);
-            i_CurrentButton.Click += card_Click;
+            i_CurrentButton.Click += Card_Click;
         }
 
-        private void card_Click(object i_Sender, EventArgs i_E)
+        private void Card_Click(object i_Sender, EventArgs i_E)
         {
             if(!(r_GameControler.CurrentPlayer is ComputerPlayer))
             {
@@ -189,10 +188,13 @@ namespace WindowsAPI
 
             m_FirstClicked = m_SecondClicked = null;
             setStatisticsGamePanel();
-            
-            if(!r_GameControler.IsGameEnds && r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
+            if (r_GameControler.IsGameEnds)
             {
-                r_GameControler.RunGame();
+                setWinnersMessage();
+            }
+            else if (r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
+            {
+                    r_GameControler.RunGame();
             }
         }
 
@@ -228,6 +230,7 @@ namespace WindowsAPI
 
         private void setNewGame()
         {
+            m_FirstClicked = m_SecondClicked = null;
             r_GameControler.setNewGameValues();
             createBoardValues();
             cleanButtons();

@@ -74,6 +74,11 @@ namespace MemoryGameLogic
         public void PlayTurn(GameBoard i_GameBoard, byte i_Line, byte i_Colom)
         {
             i_GameBoard[i_Line, i_Colom].IsRevealed = true;
+            OnPlayerMove(i_Line, i_Colom);
+        }
+
+        protected virtual void OnPlayerMove(byte i_Line, byte i_Colom)
+        {
             OnPlayerTurn?.Invoke(i_Line, i_Colom);
         }
     }

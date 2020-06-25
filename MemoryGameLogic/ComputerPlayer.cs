@@ -132,7 +132,7 @@ namespace MemoryGameLogic
 
             i_GameBoard[firstPoint.Line, firstPoint.Colom].IsRevealed = true;
             i_GameBoard[secondPoint.Line, secondPoint.Colom].IsRevealed = true;
-            OnComputerChoose?.Invoke(ref firstPoint, ref secondPoint);
+            OnComputerMove(ref firstPoint, ref secondPoint);
             o_FirstLine = firstPoint.Line;
             o_FirstColom = firstPoint.Colom;
             o_SecondLine = secondPoint.Line;
@@ -232,6 +232,11 @@ namespace MemoryGameLogic
             while(true);
 
             return randomPoint;
+        }
+
+        protected virtual void OnComputerMove(ref Point i_FirstPoint, ref Point i_SecondPoint)
+        {
+            OnComputerChoose?.Invoke(ref i_FirstPoint, ref i_SecondPoint);
         }
     }
 }
