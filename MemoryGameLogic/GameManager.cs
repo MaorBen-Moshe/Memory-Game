@@ -8,6 +8,8 @@ namespace MemoryGameLogic
     {
         public event OnPlayerChooseCard OnPlayerChooseCard;
 
+        public event Action OnGameEnds;
+
         private enum eRound
         {
             FirstRound,
@@ -21,7 +23,6 @@ namespace MemoryGameLogic
         private readonly Player r_SecondPlayer; // can be computer or regular
         private Player m_CurrentPlayer;
         private bool m_GameToggle;
-        private bool m_IsGameEnds;
         private byte m_FirstLineChosen;
         private byte m_FirstColomChosen;
         private byte m_FirstValueFound;
@@ -62,36 +63,20 @@ namespace MemoryGameLogic
             }
         }
 
-        public string FirstPlayerName
+        public Player FirstPlayer
         {
             get
             {
-                return r_FirstPlayer.Name;
+                return r_FirstPlayer;
             }
         }
 
-        public string SecondPlayerName
+        public Player SecondPlayer
         {
             get
             {
-                return r_SecondPlayer.Name;
-            }
-        }
-
-        public int FirstPlayerPairsCount
-        {
-            get
-            {
-                return r_FirstPlayer.PairsCount;
-            }
-        }
-
-        public int SecondPlayerPairsCount
-        {
-            get
-            {
-                return r_SecondPlayer.PairsCount;
-            }
+                return r_SecondPlayer;
+            } 
         }
 
         public ComputerPlayer Computer
@@ -112,7 +97,7 @@ namespace MemoryGameLogic
         {
             get
             {
-                return m_IsGameEnds;
+                return r_FirstPlayer.PairsCount + r_SecondPlayer.PairsCount == (r_GameBoard.Lines * r_GameBoard.Coloms) / 2;
             }
         }
 
@@ -132,6 +117,24 @@ namespace MemoryGameLogic
             }
         }
 
+        public string WinnerName
+        {
+            get
+            {
+                string winner = null; // if the game ends with a draw winner will stay null
+                if (r_FirstPlayer.PairsCount > r_SecondPlayer.PairsCount)
+                {
+                    winner = r_FirstPlayer.Name;
+                }
+                else if (r_SecondPlayer.PairsCount > r_FirstPlayer.PairsCount)
+                {
+                    winner = r_SecondPlayer.Name;
+                }
+
+                return winner;
+            }
+        }
+
         public void RunGame()
         {
             bool playerFoundPair = m_GameToggle 
@@ -144,22 +147,10 @@ namespace MemoryGameLogic
                 m_CurrentRound = eRound.FirstRound;
             }
             
-            m_IsGameEnds = isGameEnds();
-        }
-
-        public string WinnerName()
-        {
-            string winner = null; // if the game ends with a draw winner will stay null
-            if (r_FirstPlayer.PairsCount > r_SecondPlayer.PairsCount)
+            if(IsGameEnds)
             {
-                winner = r_FirstPlayer.Name;
+                OnGameEnds?.Invoke();
             }
-            else if (r_SecondPlayer.PairsCount > r_FirstPlayer.PairsCount)
-            {
-                winner = r_SecondPlayer.Name;
-            }
-
-            return winner;
         }
 
         public void setNewGameValues()
@@ -253,11 +244,6 @@ namespace MemoryGameLogic
             i_CurrPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
             o_ValueOfCell = r_GameBoard[o_LineChosen, o_ColomChosen].Content;
             m_CurrentRound = i_NextRound;
-        }
-
-        private bool isGameEnds()
-        {
-            return r_FirstPlayer.PairsCount + r_SecondPlayer.PairsCount == (r_GameBoard.Lines * r_GameBoard.Coloms) / 2;
         }
 
         private void setRandomlyCurrentPlayer()

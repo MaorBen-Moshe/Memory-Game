@@ -39,10 +39,16 @@ namespace WindowsAPI
             initialBoardButtons();
             intialStatisticsPanel();
             r_GameControler.OnPlayerChooseCard += GameControler_OnPlayerChooseCard;
+            r_GameControler.OnGameEnds += setWinnersMessage;
+            r_GameControler.FirstPlayer.OnPlayerTurn += Player_OnPlayerTurn;
             if(i_IsAgainstComputer)
             {
                 setGameLevel();
                 r_GameControler.Computer.OnComputerChoose += Computer_OnComputerChoose;
+            }
+            else
+            {
+                r_GameControler.SecondPlayer.OnPlayerTurn += Player_OnPlayerTurn;
             }
         }
 
@@ -68,8 +74,8 @@ namespace WindowsAPI
         
         private void Computer_OnComputerChoose(ref Player.Point i_FirstChoose, ref Player.Point i_SecondChoose)
         {
-            cardChoosekHandler(i_FirstChoose.Line, i_FirstChoose.Colom);
-            cardChoosekHandler(i_SecondChoose.Line, i_SecondChoose.Colom);
+            cardChooseHandler(i_FirstChoose.Line, i_FirstChoose.Colom);
+            cardChooseHandler(i_SecondChoose.Line, i_SecondChoose.Colom);
             m_FirstClicked = r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom];
             m_SecondClicked = r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom];
             TimerCards.Start();
@@ -125,30 +131,34 @@ namespace WindowsAPI
                         if (m_FirstClicked == null)
                         {
                             m_FirstClicked = i_Sender as Button;
-                            cardChoosekHandler(m_CurrentButtonLine, m_CurrentButtonColom);
                             return;
                         }
 
                         m_SecondClicked = i_Sender as Button;
-                        cardChoosekHandler(m_CurrentButtonLine, m_CurrentButtonColom);
                         TimerCards.Start();
                     }
                 }
             }
         }
 
+        private void cardChooseHandler(byte i_CurrentLine, byte i_CurrentColom)
+        {
+            r_Matrix[i_CurrentLine, i_CurrentColom].BackColor = labelCurrentPlayer.BackColor;
+            r_Matrix[i_CurrentLine, i_CurrentColom].Text = r_GameValues[r_GameControler[i_CurrentLine, i_CurrentColom]].ToString();
+        }
+
         private void setStatisticsGamePanel()
         {
-            labelFirstPlayer.Text = r_GameControler.FirstPlayerName;
+            labelFirstPlayer.Text = r_GameControler.FirstPlayer.Name;
             labelFirstPlayer.BackColor = Color.MediumPurple;
             labelFirstPlayerPairs.BackColor = labelFirstPlayer.BackColor;
-            labelSecondPlayer.Text = r_GameControler.SecondPlayerName;
+            labelSecondPlayer.Text = r_GameControler.SecondPlayer.Name;
             labelSecondPlayer.BackColor = Color.MediumSeaGreen;
             labelSecondPlayerPairs.BackColor = labelSecondPlayer.BackColor;
-            labelFirstPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.FirstPlayerPairsCount);
-            labelSecondPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.SecondPlayerPairsCount);
+            labelFirstPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.FirstPlayer.PairsCount);
+            labelSecondPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.SecondPlayer.PairsCount);
             labelCurrentPlayerName.Text = r_GameControler.CurrentPlayer.Name;
-            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayer.Name.Equals(r_GameControler.FirstPlayerName)
+            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayer.Name.Equals(r_GameControler.FirstPlayer.Name)
                                                    ? labelFirstPlayer.BackColor
                                                    : labelSecondPlayer.BackColor;
             labelCurrentPlayer.BackColor = labelCurrentPlayerName.BackColor;
@@ -163,10 +173,9 @@ namespace WindowsAPI
             panelStatistics.Left += r_Matrix[r_GameControler.BoardLines - 1, 0].Left - 10;
         }
 
-        private void cardChoosekHandler(byte i_CurrentLine, byte i_CurrentColom)
+        private void Player_OnPlayerTurn(byte i_CurrentLine, byte i_CurrentColom)
         {
-            r_Matrix[i_CurrentLine, i_CurrentColom].BackColor = labelCurrentPlayer.BackColor;
-            r_Matrix[i_CurrentLine, i_CurrentColom].Text = r_GameValues[r_GameControler[i_CurrentLine, i_CurrentColom]].ToString();
+            cardChooseHandler(i_CurrentLine, i_CurrentColom);
         }
 
         private void TimerCards_Tick(object i_Sender, EventArgs i_E)
@@ -180,11 +189,8 @@ namespace WindowsAPI
 
             m_FirstClicked = m_SecondClicked = null;
             setStatisticsGamePanel();
-            if (r_GameControler.IsGameEnds)
-            {
-                setWinnersMessage();
-            }
-            else if(r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
+            
+            if(!r_GameControler.IsGameEnds && r_GameControler.Computer != null && r_GameControler.CurrentPlayer is ComputerPlayer)
             {
                 r_GameControler.RunGame();
             }
@@ -192,7 +198,8 @@ namespace WindowsAPI
 
         private void setWinnersMessage()
         {
-            string winnerName = r_GameControler.WinnerName();
+            setStatisticsGamePanel();
+            string winnerName = r_GameControler.WinnerName;
             StringBuilder winnerMessage = new StringBuilder();
             winnerMessage.Append(winnerName != null
                                        ? string.Format(
@@ -204,12 +211,13 @@ namespace WindowsAPI
             DialogResult dialogResult = MessageBox.Show(
                 this,
                 winnerMessage.ToString(),
-                @"Set WinnerName",
+                @"Winner",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Information);
 
             if (dialogResult == DialogResult.No)
             {
+                MessageBox.Show(@"Thank you for using our app! hope to see you soon!", @"Goodbye");
                 this.Close();
             }
             else
@@ -222,13 +230,17 @@ namespace WindowsAPI
         {
             r_GameControler.setNewGameValues();
             createBoardValues();
-            foreach(Button currentButton in r_Matrix)
+            cleanButtons();
+            setStatisticsGamePanel();
+        }
+
+        private void cleanButtons()
+        {
+            foreach (Button currentButton in r_Matrix)
             {
                 currentButton.Text = null;
                 currentButton.BackColor = default;
             }
-
-            setStatisticsGamePanel();
         }
 
         private void createBoardValues()
