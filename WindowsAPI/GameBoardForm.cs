@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -40,15 +41,11 @@ namespace WindowsAPI
             intialStatisticsPanel();
             r_GameControler.OnPlayerChooseCard += GameControler_OnPlayerChooseCard;
             r_GameControler.FirstPlayer.OnPlayerMove += Player_OnPlayerMove;
+            r_GameControler.SecondPlayer.OnPlayerMove += Player_OnPlayerMove;
             r_GameControler.OnGameEnd += GameContorler_OnGameEnd;
             if(i_IsAgainstComputer)
             {
                 setGameLevel();
-                r_GameControler.Computer.OnComputerChoose += Computer_OnComputerChoose;
-            }
-            else
-            {
-                r_GameControler.SecondPlayer.OnPlayerMove += Player_OnPlayerMove;
             }
         }
 
@@ -63,7 +60,7 @@ namespace WindowsAPI
                 @"Game Level",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-            r_GameControler.Computer.Ai = result == DialogResult.Yes;
+            ((ComputerPlayer)r_GameControler.SecondPlayer).Ai = result == DialogResult.Yes;
         }
 
         private void intialStatisticsPanel()
@@ -96,15 +93,6 @@ namespace WindowsAPI
         {
             i_Currentline = m_CurrentButtonLine;
             i_Currentcolom = m_CurrentButtonColom;
-        }
-
-        private void Computer_OnComputerChoose(ref Player.Point i_FirstChoose, ref Player.Point i_SecondChoose)
-        {
-            cardChooseHandler(i_FirstChoose.Line, i_FirstChoose.Colom);
-            cardChooseHandler(i_SecondChoose.Line, i_SecondChoose.Colom);
-            m_FirstClicked = r_Matrix[i_FirstChoose.Line, i_FirstChoose.Colom];
-            m_SecondClicked = r_Matrix[i_SecondChoose.Line, i_SecondChoose.Colom];
-            TimerCards.Start();
         }
 
         private void Card_Click(object i_Sender, EventArgs i_E)

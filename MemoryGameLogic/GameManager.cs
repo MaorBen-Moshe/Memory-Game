@@ -79,20 +79,6 @@ namespace MemoryGameLogic
             } 
         }
 
-        public ComputerPlayer Computer
-        {
-            get
-            {
-                ComputerPlayer toReturn = null;
-                if(r_SecondPlayer is ComputerPlayer)
-                {
-                    toReturn = r_SecondPlayer as ComputerPlayer;
-                }
-
-                return toReturn;
-            }
-        }
-
         public bool IsGameEnds
         {
             get
@@ -161,7 +147,8 @@ namespace MemoryGameLogic
             r_SecondPlayer.PairsCount = 0;
             if(r_SecondPlayer is ComputerPlayer)
             {
-                (r_SecondPlayer as ComputerPlayer).SetNewGameValues((byte)BoardLines, (byte)BoardColoms, Computer.Ai);
+                bool ai = ((ComputerPlayer)r_SecondPlayer).Ai;
+                ((ComputerPlayer)r_SecondPlayer).SetNewGameValues((byte)BoardLines, (byte)BoardColoms, ai);
             }
 
             setRandomlyCurrentPlayer();
@@ -252,7 +239,7 @@ namespace MemoryGameLogic
 
         private void setRandomlyCurrentPlayer()
         {
-            if(Computer != null)
+            if(r_SecondPlayer is ComputerPlayer)
             {
                 m_GameToggle = true;
                 m_CurrentPlayer = r_FirstPlayer;
