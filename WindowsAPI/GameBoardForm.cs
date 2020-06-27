@@ -7,7 +7,7 @@ using MemoryGameLogic;
 
 namespace WindowsAPI
 {
-    public partial class GameBoardForm : Form
+    public partial class GameBoardForm : Form 
     {
         private const int k_CardStartHorizonPos = 50;
         private const int k_CardStartVerticalPos = 10;
