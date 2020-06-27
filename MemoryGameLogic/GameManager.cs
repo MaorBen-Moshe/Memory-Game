@@ -8,6 +8,8 @@ namespace MemoryGameLogic
     {
         public event OnCurrentCardChosen OnPlayerChooseCard;
 
+        public event Action OnGameEnd;
+
         private enum eRound
         {
             FirstRound,
@@ -139,10 +141,15 @@ namespace MemoryGameLogic
                                        ? playerTurn(r_FirstPlayer) 
                                        : setRivalTurn();
             if (m_CurrentRound == eRound.EndRound)
-            { 
+            {
                 m_GameToggle = playerFoundPair ? m_GameToggle : !m_GameToggle; 
                 m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer; 
                 m_CurrentRound = eRound.FirstRound;
+            }
+
+            if(IsGameEnds)
+            {
+                OnGameEnd?.Invoke();
             }
         }
 
@@ -158,6 +165,11 @@ namespace MemoryGameLogic
             }
 
             setRandomlyCurrentPlayer();
+        }
+
+        public bool IsCellRevealed(byte i_Line, byte i_Colom)
+        {
+            return r_GameBoard[i_Line, i_Colom].IsRevealed;
         }
 
         private bool setRivalTurn()

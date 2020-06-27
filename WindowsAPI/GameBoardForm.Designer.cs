@@ -124,7 +124,6 @@
             this.panelStatistics.Controls.Add(this.labelCurrentPlayerName);
             this.panelStatistics.Controls.Add(this.labelFirstPlayer);
             this.panelStatistics.Location = new System.Drawing.Point(19, 372);
-            this.panelStatistics.MaximumSize = new System.Drawing.Size(291, 137);
             this.panelStatistics.Name = "panelStatistics";
             this.panelStatistics.Size = new System.Drawing.Size(291, 137);
             this.panelStatistics.TabIndex = 6;

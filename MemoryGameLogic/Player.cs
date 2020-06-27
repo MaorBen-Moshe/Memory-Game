@@ -1,11 +1,12 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace MemoryGameLogic
 {
-    public delegate void OnPlayerTurn(byte i_LineChosen, byte i_ColomChosen);
     public class Player
     {
-        public event OnPlayerTurn OnPlayerTurn;
+        public event Action<byte, byte> OnPlayerMove;
+
         public struct Point
         {
             private byte m_Line;
@@ -33,7 +34,7 @@ namespace MemoryGameLogic
                 }
             }
         }
-
+        
         protected string m_Name;
         protected byte m_PairsCounter;
 
@@ -74,12 +75,12 @@ namespace MemoryGameLogic
         public void PlayTurn(GameBoard i_GameBoard, byte i_Line, byte i_Colom)
         {
             i_GameBoard[i_Line, i_Colom].IsRevealed = true;
-            OnPlayerMove(i_Line, i_Colom);
+            OnPlayerTurn(i_Line, i_Colom);
         }
 
-        protected virtual void OnPlayerMove(byte i_Line, byte i_Colom)
+        protected virtual void OnPlayerTurn(byte i_Line, byte i_Colom)
         {
-            OnPlayerTurn?.Invoke(i_Line, i_Colom);
+            OnPlayerMove?.Invoke(i_Line, i_Colom);
         }
     }
 }
