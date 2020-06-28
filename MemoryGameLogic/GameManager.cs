@@ -10,6 +10,8 @@ namespace MemoryGameLogic
 
         public event Action OnGameEnd;
 
+        public event Action OnAgainstComputer;
+
         private enum eRound
         {
             FirstRound,
@@ -55,14 +57,6 @@ namespace MemoryGameLogic
             }
         }
 
-        public Player CurrentPlayer
-        {
-            get
-            {
-                return m_CurrentPlayer;
-            }
-        }
-
         public Player FirstPlayer
         {
             get
@@ -76,7 +70,77 @@ namespace MemoryGameLogic
             get
             {
                 return r_SecondPlayer;
-            } 
+            }
+        }
+
+        public string CurrentPlayerName
+        {
+            get
+            {
+                return m_CurrentPlayer.Name;
+            }
+        }
+
+        public string FirstPlayerName
+        {
+            get
+            {
+                return r_FirstPlayer.Name;
+            }
+        }
+
+        public byte FirstPlayerPairsCount
+        {
+            get
+            {
+                return r_FirstPlayer.PairsCount;
+            }
+        }
+
+        public string SecondPlayerName
+        {
+            get
+            {
+                return r_SecondPlayer.Name;
+            }
+        }
+
+        public byte SecondPlayerPairsCount
+        {
+            get
+            {
+                return r_SecondPlayer.PairsCount;
+            }
+        }
+
+        public bool Ai
+        {
+            get
+            {
+                bool ai = false;
+                if(r_SecondPlayer is ComputerPlayer)
+                {
+                    ai = ((ComputerPlayer)r_SecondPlayer).Ai;
+                }
+
+                return ai;
+            }
+
+            set
+            {
+                if(r_SecondPlayer is ComputerPlayer)
+                {
+                    ((ComputerPlayer)r_SecondPlayer).Ai = value;
+                }
+            }
+        }
+
+        public bool IsCurrentComputer
+        {
+            get
+            {
+                return m_CurrentPlayer is ComputerPlayer;
+            }
         }
 
         public bool IsGameEnds
@@ -157,6 +221,14 @@ namespace MemoryGameLogic
         public bool IsCellRevealed(byte i_Line, byte i_Colom)
         {
             return r_GameBoard[i_Line, i_Colom].IsRevealed;
+        }
+
+        public void StartGame()
+        {
+            if(r_SecondPlayer is ComputerPlayer)
+            {
+                OnAgainstComputer?.Invoke();
+            }
         }
 
         private bool setRivalTurn()

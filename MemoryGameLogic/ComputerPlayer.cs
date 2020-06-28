@@ -143,6 +143,11 @@ namespace MemoryGameLogic
             base.OnPlayerTurn(i_Line, i_Colom);
         }
 
+        protected override void OnPlayerTurn(byte i_Line, byte i_Colom)
+        {
+            base.OnPlayerTurn(i_Line, i_Colom);
+        }
+
         private void initPointList(byte i_Lines, byte i_Coloms)
         {
             for (byte i = 0; i < i_Lines; i++)

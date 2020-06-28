@@ -35,35 +35,29 @@ namespace WindowsAPI
         {
             InitializeComponent();
             r_GameValues = new Dictionary<byte, char>();
-            r_GameControler = new GameManager(i_FirstPlayerName, i_SecondPlayerName, i_BoardSize.X, i_BoardSize.Y, i_IsAgainstComputer);
+            r_GameControler = new GameManager(
+                i_FirstPlayerName,
+                i_SecondPlayerName,
+                i_BoardSize.X,
+                i_BoardSize.Y,
+                i_IsAgainstComputer);
             r_Matrix = new Button[i_BoardSize.X, i_BoardSize.Y];
             initialBoardButtons();
-            intialStatisticsPanel();
+            initialStatisticsPanel();
+            initialObservers();
+            r_GameControler.StartGame();
+        }
+
+        private void initialObservers()
+        {
             r_GameControler.OnPlayerChooseCard += GameControler_OnPlayerChooseCard;
             r_GameControler.FirstPlayer.OnPlayerMove += Player_OnPlayerMove;
             r_GameControler.SecondPlayer.OnPlayerMove += Player_OnPlayerMove;
             r_GameControler.OnGameEnd += GameContorler_OnGameEnd;
-            if(i_IsAgainstComputer)
-            {
-                setGameLevel();
-            }
+            r_GameControler.OnAgainstComputer += GameControler_OnAgainstComputer;
         }
 
-        private void setGameLevel()
-        {
-            string askForLevel = string.Format(
-                format: @"Would you like the play in:
-1.Hard Mode - press Yes
-2.Easy Mode - press No");
-            DialogResult result = MessageBox.Show(
-                askForLevel,
-                @"Game Level",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-            ((ComputerPlayer)r_GameControler.SecondPlayer).Ai = result == DialogResult.Yes;
-        }
-
-        private void intialStatisticsPanel()
+        private void initialStatisticsPanel()
         {
             setStatisticsGamePanel();
             labelFirstPlayerPairs.Left = labelFirstPlayer.Left + labelFirstPlayer.Width + 10;
@@ -74,19 +68,33 @@ namespace WindowsAPI
 
         private void setStatisticsGamePanel()
         {
-            labelFirstPlayer.Text = r_GameControler.FirstPlayer.Name;
+            labelFirstPlayer.Text = r_GameControler.FirstPlayerName;
             labelFirstPlayer.BackColor = Color.MediumPurple;
             labelFirstPlayerPairs.BackColor = labelFirstPlayer.BackColor;
-            labelSecondPlayer.Text = r_GameControler.SecondPlayer.Name;
+            labelSecondPlayer.Text = r_GameControler.SecondPlayerName;
             labelSecondPlayer.BackColor = Color.MediumSeaGreen;
             labelSecondPlayerPairs.BackColor = labelSecondPlayer.BackColor;
-            labelFirstPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.FirstPlayer.PairsCount);
-            labelSecondPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.SecondPlayer.PairsCount);
-            labelCurrentPlayerName.Text = r_GameControler.CurrentPlayer.Name;
-            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayer.Name.Equals(r_GameControler.FirstPlayer.Name)
+            labelFirstPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.FirstPlayerPairsCount);
+            labelSecondPlayerPairs.Text = string.Format(format: @"{0} Pair(s)", r_GameControler.SecondPlayerPairsCount);
+            labelCurrentPlayerName.Text = r_GameControler.CurrentPlayerName;
+            labelCurrentPlayerName.BackColor = r_GameControler.CurrentPlayerName.Equals(r_GameControler.FirstPlayerName)
                                                    ? labelFirstPlayer.BackColor
                                                    : labelSecondPlayer.BackColor;
             labelCurrentPlayer.BackColor = labelCurrentPlayerName.BackColor;
+        }
+
+        private void GameControler_OnAgainstComputer()
+        {
+            string askForLevel = string.Format(
+                format: @"Would you like the play in:
+1.Hard Mode - press Yes
+2.Easy Mode - press No");
+            DialogResult result = MessageBox.Show(
+                askForLevel,
+                @"Game Level",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+            r_GameControler.Ai = result == DialogResult.Yes;
         }
 
         private void GameControler_OnPlayerChooseCard(out byte i_Currentline, out byte i_Currentcolom)
@@ -97,7 +105,7 @@ namespace WindowsAPI
 
         private void Card_Click(object i_Sender, EventArgs i_E)
         {
-            if (!(r_GameControler.CurrentPlayer is ComputerPlayer))
+            if (!(r_GameControler.IsCurrentComputer))
             {
                 Button current = i_Sender as Button;
                 string[] locationOfButton = current.Name.Split(' ');
@@ -134,10 +142,14 @@ namespace WindowsAPI
                 m_FirstClicked.BackColor = m_SecondClicked.BackColor = default;
                 m_FirstClicked.Text = m_SecondClicked.Text = null;
             }
+            else
+            {
+                System.Threading.Thread.Sleep(1500);
+            }
 
             m_FirstClicked = m_SecondClicked = null;
             setStatisticsGamePanel();
-            if (!r_GameControler.IsGameEnds && r_GameControler.CurrentPlayer is ComputerPlayer)
+            if (!r_GameControler.IsGameEnds && r_GameControler.IsCurrentComputer)
             {
                     r_GameControler.RunGame();
             }
