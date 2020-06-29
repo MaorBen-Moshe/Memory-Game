@@ -55,6 +55,12 @@ namespace WindowsAPI
             r_GameControler.SecondPlayer.OnPlayerMove += Player_OnPlayerMove;
             r_GameControler.OnGameEnd += GameContorler_OnGameEnd;
             r_GameControler.OnAgainstComputer += GameControler_OnAgainstComputer;
+            r_GameControler.OnPlayerTurnEnd += GameControler_OnPlayerTurnEnd;
+        }
+
+        private void GameControler_OnPlayerTurnEnd()
+        {
+            setStatisticsGamePanel();
         }
 
         private void initialStatisticsPanel()
@@ -105,7 +111,7 @@ namespace WindowsAPI
 
         private void Card_Click(object i_Sender, EventArgs i_E)
         {
-            if (!(r_GameControler.IsCurrentComputer))
+            if (!r_GameControler.IsCurrentComputer)
             {
                 Button current = i_Sender as Button;
                 string[] locationOfButton = current.Name.Split(' ');
@@ -148,7 +154,6 @@ namespace WindowsAPI
             }
 
             m_FirstClicked = m_SecondClicked = null;
-            setStatisticsGamePanel();
             if (!r_GameControler.IsGameEnds && r_GameControler.IsCurrentComputer)
             {
                     r_GameControler.RunGame();
@@ -157,7 +162,6 @@ namespace WindowsAPI
 
         private void GameContorler_OnGameEnd()
         {
-            setStatisticsGamePanel();
             string winnerName = r_GameControler.WinnerName;
             StringBuilder winnerMessage = new StringBuilder();
             winnerMessage.Append(winnerName != null

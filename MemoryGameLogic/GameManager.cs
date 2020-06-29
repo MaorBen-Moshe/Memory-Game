@@ -12,6 +12,8 @@ namespace MemoryGameLogic
 
         public event Action OnAgainstComputer;
 
+        public event Action OnPlayerTurnEnd;
+
         private enum eRound
         {
             FirstRound,
@@ -185,6 +187,14 @@ namespace MemoryGameLogic
             }
         }
 
+        public void StartGame()
+        {
+            if (r_SecondPlayer is ComputerPlayer)
+            {
+                OnGameAgainstComputer();
+            }
+        }
+
         public void RunGame()
         {
             bool playerFoundPair = m_GameToggle 
@@ -195,11 +205,12 @@ namespace MemoryGameLogic
                 m_GameToggle = playerFoundPair ? m_GameToggle : !m_GameToggle; 
                 m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer; 
                 m_CurrentRound = eRound.FirstRound;
+                OnTurnEnd();
             }
 
             if(IsGameEnds)
             {
-                OnGameEnd?.Invoke();
+                OnGameEnds();
             }
         }
 
@@ -221,14 +232,6 @@ namespace MemoryGameLogic
         public bool IsCellRevealed(byte i_Line, byte i_Colom)
         {
             return r_GameBoard[i_Line, i_Colom].IsRevealed;
-        }
-
-        public void StartGame()
-        {
-            if(r_SecondPlayer is ComputerPlayer)
-            {
-                OnAgainstComputer?.Invoke();
-            }
         }
 
         private bool setRivalTurn()
@@ -301,7 +304,12 @@ namespace MemoryGameLogic
             return playerSucceeded;
         }
 
-        private void playerTurnHandler(Player i_CurrPlayer, eRound i_NextRound, out byte o_LineChosen, out byte o_ColomChosen, out byte o_ValueOfCell)
+        private void playerTurnHandler(
+                                       Player i_CurrPlayer,
+                                       eRound i_NextRound,
+                                       out byte o_LineChosen,
+                                       out byte o_ColomChosen,
+                                       out byte o_ValueOfCell)
         {
             OnCurrentCardChosen(out o_LineChosen, out o_ColomChosen);
             i_CurrPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
@@ -327,6 +335,21 @@ namespace MemoryGameLogic
         {
             i_CurrentLine = i_CurrentColom = default;
             OnPlayerChooseCard?.Invoke(out i_CurrentLine, out i_CurrentColom);
+        }
+
+        protected virtual void OnGameAgainstComputer()
+        {
+            OnAgainstComputer?.Invoke();
+        }
+
+        protected virtual void OnGameEnds()
+        {
+            OnGameEnd?.Invoke();
+        }
+
+        protected virtual void OnTurnEnd()
+        {
+            OnPlayerTurnEnd?.Invoke();
         }
     }
 }

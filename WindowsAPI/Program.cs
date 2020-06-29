@@ -1,6 +1,4 @@
 ﻿using System.Windows.Forms;
-using System;
-using System.Drawing;
 
 namespace WindowsAPI
 {
