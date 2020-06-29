@@ -75,7 +75,7 @@ namespace MemoryGameLogic
             this.r_Coloms = i_Coloms;
             this.r_Board = new Cell[i_Lines, i_Coloms];
             this.r_Rand = new Random();
-            intialBoardWithValues();
+            IntialBoardWithValues();
         }
 
         internal void Clear()
@@ -87,7 +87,7 @@ namespace MemoryGameLogic
             }
         }
 
-        internal void intialBoardWithValues()
+        internal void IntialBoardWithValues()
         {
             List<Cell> cellsList = new List<Cell>(r_Lines * r_Coloms);
             for (byte i = 0; i < r_Lines; i++)

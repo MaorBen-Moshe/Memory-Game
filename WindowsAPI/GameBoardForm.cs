@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -143,12 +142,13 @@ namespace WindowsAPI
         private void TimerCards_Tick(object i_Sender, EventArgs i_E)
         {
             TimerCards.Stop();
-            if (m_FirstClicked.Text != m_SecondClicked.Text)
+            if (!m_FirstClicked.Text.Equals(m_SecondClicked.Text))
             {
+                System.Threading.Thread.Sleep(1000);
                 m_FirstClicked.BackColor = m_SecondClicked.BackColor = default;
                 m_FirstClicked.Text = m_SecondClicked.Text = null;
             }
-            else
+            else if(r_GameControler.IsCurrentComputer && m_FirstClicked.Text.Equals(m_SecondClicked.Text))
             {
                 System.Threading.Thread.Sleep(1500);
             }

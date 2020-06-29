@@ -33,7 +33,7 @@ namespace MemoryGameLogic
         private byte m_SecondLineChosen;
         private byte m_SecondColomChosen;
         private byte m_SecondValueFound;
-        private eRound m_CurrentRound = eRound.FirstRound;
+        private eRound m_CurrentRound;
 
         public GameManager(
                            string i_FirstPlayer,
@@ -189,6 +189,7 @@ namespace MemoryGameLogic
 
         public void StartGame()
         {
+            m_CurrentRound = eRound.FirstRound;
             if (r_SecondPlayer is ComputerPlayer)
             {
                 OnGameAgainstComputer();
@@ -217,7 +218,7 @@ namespace MemoryGameLogic
         public void setNewGameValues()
         {
             r_GameBoard.Clear();
-            r_GameBoard.intialBoardWithValues();
+            r_GameBoard.IntialBoardWithValues();
             r_FirstPlayer.PairsCount = 0;
             r_SecondPlayer.PairsCount = 0;
             if(r_SecondPlayer is ComputerPlayer)

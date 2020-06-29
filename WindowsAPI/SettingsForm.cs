@@ -15,7 +15,7 @@ namespace WindowsAPI
         private byte m_CurrentBoardSizeIndex;
         private GameBoardForm m_BoardForm;
 
-        internal SettingsForm()
+        public SettingsForm()
         {
             intialBoardSizes();
             InitializeComponent();
@@ -69,7 +69,7 @@ namespace WindowsAPI
             }
 
             Point current = r_BoardSizeList[m_CurrentBoardSizeIndex];
-            buttonBoardSize.Text = string.Format(format: "{0}x{1}", current.X, current.Y);
+            buttonBoardSize.Text = string.Format(format: @"{0}x{1}", current.X, current.Y);
         }
 
         private void buttonAgainst_Click(object i_Sender, EventArgs i_)
