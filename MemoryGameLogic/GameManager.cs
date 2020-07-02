@@ -4,13 +4,15 @@ namespace MemoryGameLogic
 {
     public delegate void OnCurrentCardChosen(out byte i_CurrentLine, out byte i_CurrentColom);
 
+    public delegate void OnAgainstComputer(out bool i_Ai);
+
     public class GameManager
     {
         public event OnCurrentCardChosen OnPlayerChooseCard;
 
         public event Action OnGameEnd;
 
-        public event Action OnAgainstComputer;
+        public event OnAgainstComputer OnAgainstComputer;
 
         public event Action OnPlayerTurnEnd;
 
@@ -115,28 +117,6 @@ namespace MemoryGameLogic
             }
         }
 
-        public bool Ai
-        {
-            get
-            {
-                bool ai = false;
-                if(r_SecondPlayer is ComputerPlayer)
-                {
-                    ai = ((ComputerPlayer)r_SecondPlayer).Ai;
-                }
-
-                return ai;
-            }
-
-            set
-            {
-                if(r_SecondPlayer is ComputerPlayer)
-                {
-                    ((ComputerPlayer)r_SecondPlayer).Ai = value;
-                }
-            }
-        }
-
         public bool IsCurrentComputer
         {
             get
@@ -199,7 +179,7 @@ namespace MemoryGameLogic
         public void RunGame()
         {
             bool playerFoundPair = m_GameToggle 
-                                       ? playerTurn(r_FirstPlayer) 
+                                       ? playerTurn() 
                                        : setRivalTurn();
             if (m_CurrentRound == eRound.EndRound)
             {
@@ -239,13 +219,13 @@ namespace MemoryGameLogic
         {
             return r_SecondPlayer is ComputerPlayer
                        ? computerTurn()
-                       : playerTurn(r_SecondPlayer);
+                       : playerTurn();
         }
 
         private bool computerTurn()
         {
             bool matchFound = false;
-            (r_SecondPlayer as ComputerPlayer).PlayTurn(
+            ((ComputerPlayer)r_SecondPlayer).PlayTurn(
                 r_GameBoard,
                 out byte firstLine,
                 out byte firstColom,
@@ -266,63 +246,68 @@ namespace MemoryGameLogic
             return matchFound;
         }
 
-        private bool playerTurn(Player i_CurrPlayer)
+        private bool playerTurn()
         {
             bool playerSucceeded = false;
 
             switch (m_CurrentRound)
             {
                 case eRound.FirstRound:
-                    playerTurnHandler(i_CurrPlayer, eRound.SecondRound, out m_FirstLineChosen, out m_FirstColomChosen, out m_FirstValueFound);
+                    playerTurnHandler(eRound.SecondRound, out m_FirstLineChosen, out m_FirstColomChosen, out m_FirstValueFound);
                     break;
                 case eRound.SecondRound:
-                    playerTurnHandler(i_CurrPlayer, eRound.EndRound, out m_SecondLineChosen, out m_SecondColomChosen, out m_SecondValueFound);
+                    playerTurnHandler(eRound.EndRound, out m_SecondLineChosen, out m_SecondColomChosen, out m_SecondValueFound);
+                    goto case eRound.EndRound; 
+                case eRound.EndRound:
+                    playerSucceeded = playerEndTurnHandler();
                     break;
-            }
-
-            if(m_CurrentRound == eRound.EndRound)
-            {
-                (r_SecondPlayer as ComputerPlayer)?.ComputerLearn(
-                    m_FirstLineChosen,
-                    m_FirstColomChosen,
-                    m_FirstValueFound,
-                    m_SecondLineChosen,
-                    m_SecondColomChosen,
-                    m_SecondValueFound);
-
-                if (r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].Content == r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].Content)
-                {
-                    i_CurrPlayer.PairsCount++;
-                    playerSucceeded = true;
-                }
-                else
-                {
-                    r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].IsRevealed = false;
-                    r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].IsRevealed = false;
-                }
             }
 
             return playerSucceeded;
         }
 
         private void playerTurnHandler(
-                                       Player i_CurrPlayer,
                                        eRound i_NextRound,
                                        out byte o_LineChosen,
                                        out byte o_ColomChosen,
                                        out byte o_ValueOfCell)
         {
             OnCurrentCardChosen(out o_LineChosen, out o_ColomChosen);
-            i_CurrPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
+            m_CurrentPlayer.PlayTurn(r_GameBoard, o_LineChosen, o_ColomChosen);
             o_ValueOfCell = r_GameBoard[o_LineChosen, o_ColomChosen].Content;
             m_CurrentRound = i_NextRound;
+        }
+
+        private bool playerEndTurnHandler()
+        {
+            bool playerSucceeded = false;
+            (r_SecondPlayer as ComputerPlayer)?.ComputerLearn(
+                m_FirstLineChosen,
+                m_FirstColomChosen,
+                m_FirstValueFound,
+                m_SecondLineChosen,
+                m_SecondColomChosen,
+                m_SecondValueFound);
+
+            if (r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].Content == r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].Content)
+            {
+                m_CurrentPlayer.PairsCount++;
+                playerSucceeded = true;
+            }
+            else
+            {
+                r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].IsRevealed = false;
+                r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].IsRevealed = false;
+            }
+
+            return playerSucceeded;
         }
 
         private void setRandomlyCurrentPlayer()
         {
             if(r_SecondPlayer is ComputerPlayer)
             {
-                m_GameToggle = true;
+                m_GameToggle = true; // if we play against the computer the human player starts the game
                 m_CurrentPlayer = r_FirstPlayer;
             }
             else
@@ -332,15 +317,21 @@ namespace MemoryGameLogic
             }
         }
 
-        protected virtual void OnCurrentCardChosen(out byte i_CurrentLine, out byte i_CurrentColom)
+        protected virtual void OnCurrentCardChosen(out byte o_CurrentLine, out byte o_CurrentColom)
         {
-            i_CurrentLine = i_CurrentColom = default;
-            OnPlayerChooseCard?.Invoke(out i_CurrentLine, out i_CurrentColom);
+            o_CurrentLine = o_CurrentColom = default;
+            OnPlayerChooseCard?.Invoke(out o_CurrentLine, out o_CurrentColom);
+            if(o_CurrentLine >= BoardLines || o_CurrentColom >= BoardColoms)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         protected virtual void OnGameAgainstComputer()
         {
-            OnAgainstComputer?.Invoke();
+            bool ai = false;
+            OnAgainstComputer?.Invoke(out ai);
+            ((ComputerPlayer)r_SecondPlayer).Ai = ai;
         }
 
         protected virtual void OnGameEnds()

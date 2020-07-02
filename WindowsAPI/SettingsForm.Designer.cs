@@ -57,7 +57,7 @@
             this.buttonAgainst.Location = new System.Drawing.Point(432, 61);
             this.buttonAgainst.Name = "buttonAgainst";
             this.buttonAgainst.Size = new System.Drawing.Size(171, 37);
-            this.buttonAgainst.TabIndex = 4;
+            this.buttonAgainst.TabIndex = 2;
             this.buttonAgainst.Text = "Against a friend";
             this.buttonAgainst.UseVisualStyleBackColor = true;
             this.buttonAgainst.Click += new System.EventHandler(this.buttonAgainst_Click);

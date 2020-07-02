@@ -65,6 +65,11 @@ namespace MemoryGameLogic
         {
             get
             {
+                if(i_Line > r_Lines || i_Colom > r_Coloms)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
                 return this.r_Board[i_Line, i_Colom];
             }
         }

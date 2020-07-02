@@ -88,7 +88,7 @@ namespace WindowsAPI
             labelCurrentPlayer.BackColor = labelCurrentPlayerName.BackColor;
         }
 
-        private void GameControler_OnAgainstComputer()
+        private void GameControler_OnAgainstComputer(out bool o_Ai)
         {
             string askForLevel = string.Format(
                 format: @"Would you like the play in:
@@ -99,13 +99,13 @@ namespace WindowsAPI
                 @"Game Level",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-            r_GameControler.Ai = result == DialogResult.Yes;
+            o_Ai = result == DialogResult.Yes;
         }
 
-        private void GameControler_OnPlayerChooseCard(out byte i_Currentline, out byte i_Currentcolom)
+        private void GameControler_OnPlayerChooseCard(out byte o_Currentline, out byte o_Currentcolom)
         {
-            i_Currentline = m_CurrentButtonLine;
-            i_Currentcolom = m_CurrentButtonColom;
+            o_Currentline = m_CurrentButtonLine;
+            o_Currentcolom = m_CurrentButtonColom;
         }
 
         private void Card_Click(object i_Sender, EventArgs i_E)
