@@ -46,10 +46,10 @@
             this.labelCurrentPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCurrentPlayer.AutoSize = true;
-            this.labelCurrentPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.labelCurrentPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.labelCurrentPlayer.Location = new System.Drawing.Point(12, 18);
             this.labelCurrentPlayer.Name = "labelCurrentPlayer";
-            this.labelCurrentPlayer.Size = new System.Drawing.Size(128, 20);
+            this.labelCurrentPlayer.Size = new System.Drawing.Size(113, 20);
             this.labelCurrentPlayer.TabIndex = 0;
             this.labelCurrentPlayer.Text = "Current Player:";
             // 
@@ -58,20 +58,20 @@
             this.labelFirstPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.labelFirstPlayer.AutoSize = true;
-            this.labelFirstPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.labelFirstPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.labelFirstPlayer.Location = new System.Drawing.Point(12, 55);
             this.labelFirstPlayer.Name = "labelFirstPlayer";
-            this.labelFirstPlayer.Size = new System.Drawing.Size(96, 20);
+            this.labelFirstPlayer.Size = new System.Drawing.Size(86, 20);
             this.labelFirstPlayer.TabIndex = 1;
             this.labelFirstPlayer.Text = "FirstName:";
             // 
             // labelSecondPlayer
             // 
             this.labelSecondPlayer.AutoSize = true;
-            this.labelSecondPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.labelSecondPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.labelSecondPlayer.Location = new System.Drawing.Point(12, 96);
             this.labelSecondPlayer.Name = "labelSecondPlayer";
-            this.labelSecondPlayer.Size = new System.Drawing.Size(121, 20);
+            this.labelSecondPlayer.Size = new System.Drawing.Size(110, 20);
             this.labelSecondPlayer.TabIndex = 2;
             this.labelSecondPlayer.Text = "SecondName:";
             // 

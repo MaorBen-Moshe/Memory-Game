@@ -53,11 +53,11 @@ namespace MemoryGameLogic
             setRandomlyCurrentPlayer();
         }
 
-        public byte this[int i_Line, int i_Colom]
+        public GameBoard.Cell this[int i_Line, int i_Colom]
         {
             get
             {
-                return r_GameBoard[(byte)i_Line, (byte)i_Colom].Content;
+                return r_GameBoard[(byte)i_Line, (byte)i_Colom];
             }
         }
 
@@ -195,7 +195,7 @@ namespace MemoryGameLogic
             }
         }
 
-        public void setNewGameValues()
+        public void SetNewGameValues()
         {
             r_GameBoard.Clear();
             r_GameBoard.IntialBoardWithValues();

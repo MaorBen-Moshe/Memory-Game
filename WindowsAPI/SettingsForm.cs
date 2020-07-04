@@ -91,28 +91,52 @@ namespace WindowsAPI
 
         private void buttonStart_Click(object i_Sender, EventArgs i_E)
         {
-            if(ensureNameHasValue())
+            closingOrStartButtonHandler();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs i_E)
+        {
+            CloseReason reason = i_E.CloseReason;
+            if(reason == CloseReason.UserClosing)
             {
-                MessageBox.Show(
-                    this,
-                    @"Player name cannot be empty!", 
-                    @"Name Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+               bool isNameHasValue = closingOrStartButtonHandler();
+               if(!isNameHasValue)
+               {
+                   i_E.Cancel = true;
+               }
             }
-            else
-            {
-                bool isAgainstComputer = textBoxSecondPlayer.Enabled == false;
-                m_BoardForm = new GameBoardForm(FirstPlayerName, SecondPlayerName, BoardSize, isAgainstComputer);
-                Hide();
-                m_BoardForm.ShowDialog();
-            }
+
+            base.OnFormClosing(i_E);
         }
 
         private bool ensureNameHasValue()
         {
             return string.IsNullOrWhiteSpace(textBoxFirstName.Text) 
                    || string.IsNullOrWhiteSpace(textBoxSecondPlayer.Text);
+        }
+
+        private bool closingOrStartButtonHandler()
+        {
+            bool isNameHasValue = true;
+            if (ensureNameHasValue())
+            {
+                MessageBox.Show(
+                    this,
+                    @"Player name cannot be empty!",
+                    @"Name Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                isNameHasValue = false;
+            }
+            else
+            {
+                 bool isAgainstComputer = textBoxSecondPlayer.Enabled == false;
+                m_BoardForm = new GameBoardForm(FirstPlayerName, SecondPlayerName, BoardSize, isAgainstComputer);
+                Hide();
+                m_BoardForm.ShowDialog();
+            }
+
+            return isNameHasValue;
         }
 
         private void textBox_TextChanged(object i_Sender, EventArgs i_E)

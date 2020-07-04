@@ -140,7 +140,7 @@ namespace MemoryGameLogic
         private void currentTurn(GameBoard i_GameBoard, byte i_Line, byte i_Colom)
         {
             i_GameBoard[i_Line, i_Colom].IsRevealed = true;
-            base.OnPlayerTurn(i_Line, i_Colom);
+            OnPlayerTurn(i_Line, i_Colom);
         }
 
         protected override void OnPlayerTurn(byte i_Line, byte i_Colom)

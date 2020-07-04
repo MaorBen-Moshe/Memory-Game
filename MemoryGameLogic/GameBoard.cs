@@ -7,8 +7,18 @@ namespace MemoryGameLogic
     {
         public class Cell
         {
+            public event Action<byte, byte> OnCellRevealed;
+
             private byte m_Content;
             private bool m_IsRevealed;
+            private readonly byte r_LinePlace;
+            private readonly byte r_ColomPlace;
+
+            public Cell(byte i_Line, byte i_Colom)
+            {
+                r_LinePlace = i_Line;
+                r_ColomPlace = i_Colom;
+            }
 
             public byte Content
             {
@@ -36,6 +46,10 @@ namespace MemoryGameLogic
                 set
                 {
                     m_IsRevealed = value;
+                    if(m_IsRevealed)
+                    {
+                        OnCellRevealed?.Invoke(r_LinePlace, r_ColomPlace);
+                    }
                 }
             }
         }
@@ -99,7 +113,7 @@ namespace MemoryGameLogic
             {
                 for (byte j = 0; j < r_Coloms; j++)
                 {
-                    r_Board[i, j] = new Cell();
+                    r_Board[i, j] = new Cell(i, j);
                     cellsList.Add(r_Board[i, j]);
                 }
             }
