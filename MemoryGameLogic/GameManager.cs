@@ -224,26 +224,15 @@ namespace MemoryGameLogic
 
         private bool computerTurn()
         {
-            bool matchFound = false;
             ((ComputerPlayer)r_SecondPlayer).PlayTurn(
                 r_GameBoard,
-                out byte firstLine,
-                out byte firstColom,
-                out byte secondLine,
-                out byte secondColom);
-            if (r_GameBoard[firstLine, firstColom].Content == r_GameBoard[secondLine, secondColom].Content)
-            {
-                r_SecondPlayer.PairsCount++;
-                matchFound = true;
-            }
-            else
-            {
-                r_GameBoard[firstLine, firstColom].IsRevealed = false;
-                r_GameBoard[secondLine, secondColom].IsRevealed = false;
-            }
+                out m_FirstLineChosen,
+                out m_FirstColomChosen,
+                out m_SecondLineChosen,
+                out m_SecondColomChosen);
 
             m_CurrentRound = eRound.EndRound;
-            return matchFound;
+            return isPlayerFoundPair();
         }
 
         private bool playerTurn()
@@ -280,7 +269,6 @@ namespace MemoryGameLogic
 
         private bool playerEndTurnHandler()
         {
-            bool playerSucceeded = false;
             (r_SecondPlayer as ComputerPlayer)?.ComputerLearn(
                 m_FirstLineChosen,
                 m_FirstColomChosen,
@@ -289,6 +277,12 @@ namespace MemoryGameLogic
                 m_SecondColomChosen,
                 m_SecondValueFound);
 
+            return isPlayerFoundPair();
+        }
+
+        private bool isPlayerFoundPair()
+        {
+            bool playerSucceeded = false;
             if (r_GameBoard[m_FirstLineChosen, m_FirstColomChosen].Content == r_GameBoard[m_SecondLineChosen, m_SecondColomChosen].Content)
             {
                 m_CurrentPlayer.PairsCount++;
@@ -308,13 +302,13 @@ namespace MemoryGameLogic
             if(r_SecondPlayer is ComputerPlayer)
             {
                 m_GameToggle = true; // if we play against the computer the human player starts the game
-                m_CurrentPlayer = r_FirstPlayer;
             }
             else
             {
                 m_GameToggle = r_Rnd.Next(2) == 0; // randomly pick true or false, the start player will change
-                m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
             }
+
+            m_CurrentPlayer = m_GameToggle ? r_FirstPlayer : r_SecondPlayer;
         }
 
         protected virtual void OnCurrentCardChosen(out byte o_CurrentLine, out byte o_CurrentColom)
