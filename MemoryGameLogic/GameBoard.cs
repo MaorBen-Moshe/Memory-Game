@@ -7,12 +7,10 @@ namespace MemoryGameLogic
     {
         public class Cell
         {
-            public event Action<byte, byte> OnCellRevealed;
-
-            private byte m_Content;
-            private bool m_IsRevealed;
             private readonly byte r_LinePlace;
             private readonly byte r_ColomPlace;
+            private byte m_Content;
+            private bool m_IsRevealed;
 
             public Cell(byte i_Line, byte i_Colom)
             {
@@ -46,10 +44,6 @@ namespace MemoryGameLogic
                 set
                 {
                     m_IsRevealed = value;
-                    if(m_IsRevealed)
-                    {
-                        OnCellRevealed?.Invoke(r_LinePlace, r_ColomPlace);
-                    }
                 }
             }
         }

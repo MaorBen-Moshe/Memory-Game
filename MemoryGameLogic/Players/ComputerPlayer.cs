@@ -21,15 +21,6 @@ namespace MemoryGameLogic
             initPointList(i_Lines, i_Coloms);
         }
 
-        internal void SetNewGameValues(byte i_Lines, byte i_Coloms, bool i_IsAi)
-        {
-            m_Ai = i_IsAi;
-            r_UnknownCellsList.Clear();
-            initPointList(i_Lines, i_Coloms);
-            r_UnMatchedRevealedCells.Clear();
-            r_MatchedRevealedCells.Clear();
-        }
-
         public bool Ai
         {
             get
@@ -41,6 +32,15 @@ namespace MemoryGameLogic
             {
                 m_Ai = value;
             }
+        }
+
+        internal void SetNewGameValues(byte i_Lines, byte i_Coloms, bool i_IsAi)
+        {
+            m_Ai = i_IsAi;
+            r_UnknownCellsList.Clear();
+            initPointList(i_Lines, i_Coloms);
+            r_UnMatchedRevealedCells.Clear();
+            r_MatchedRevealedCells.Clear();
         }
 
         public void ComputerLearn(

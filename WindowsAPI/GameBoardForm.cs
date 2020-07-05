@@ -127,6 +127,7 @@ namespace WindowsAPI
 
         private void Player_OnPlayerMove(byte i_CurrentLine, byte i_CurrentColom)
         {
+            cardRevealedHandler(i_CurrentLine, i_CurrentColom);
             if (m_FirstClicked == null)
             {
                 m_FirstClicked = r_Matrix[i_CurrentLine, i_CurrentColom];
@@ -187,7 +188,7 @@ namespace WindowsAPI
             }
         }
 
-        private void GameBoardCell_OnCellRevealed(byte i_CurrentLine, byte i_CurrentColom)
+        private void cardRevealedHandler(byte i_CurrentLine, byte i_CurrentColom)
         {
             r_Matrix[i_CurrentLine, i_CurrentColom].BackColor = labelCurrentPlayer.BackColor;
             r_Matrix[i_CurrentLine, i_CurrentColom].Text = r_GameValues[r_GameControler[i_CurrentLine, i_CurrentColom].Content].ToString();
@@ -227,7 +228,6 @@ namespace WindowsAPI
                     setButtonDesign(r_Matrix[i, j], firstHorizonPos, firstVerticalPos);
                     firstHorizonPos += m_BoardCardRight;
                     this.Controls.Add(r_Matrix[i, j]);
-                    r_GameControler[i, j].OnCellRevealed += GameBoardCell_OnCellRevealed;
                 }
 
                 firstHorizonPos = k_CardStartHorizonPos;
